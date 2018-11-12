@@ -23,5 +23,9 @@
   "dependencies": {
     "config": "^2.0.1",
     "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "jasmine": "^3.3.0",
+    "jasmine-theories": "^0.1.3"
   }
 }
