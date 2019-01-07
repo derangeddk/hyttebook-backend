@@ -23,7 +23,9 @@
   "homepage": "https://github.com/derangeddk/hyttebook-backend#readme",
   "dependencies": {
     "config": "^2.0.1",
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "pg": "^7.7.1",
+    "pg-pool": "^2.0.6"
   },
   "devDependencies": {
     "jasmine": "^3.3.0",

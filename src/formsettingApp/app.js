@@ -6,7 +6,7 @@ const updateFormsettingEndpoint = require("./update/endpoint");
 module.exports = (formsettings) => {
     let app = express();
 
-    app.post("/", createFormsettingEndpoint(formsettings));
+    app.post("/", createFormsettingsEndpoint(formsettings));
     app.get("/", getFormsettingEndpoint(formsettings));
     app.put("/", updateFormsettingEndpoint(formsettings));
 
