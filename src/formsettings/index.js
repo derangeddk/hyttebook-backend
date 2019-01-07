@@ -33,13 +33,25 @@ function getFormsetting(db, userId) {
 }
 
 function createFormsetting(db, userId) {
-    return new Promise();
+    let data = getDefaultFormsettings();
+    return new Promise((resolve, reject) => {
+        db.query("INSERT INTO form_settings(id, data) VALUES($1::uuid, $2::json)", [userId, data], (error, result) => {
+            if(error) {
+                return reject( {
+                    type: FormsettingNotCreated,
+                    trace: new Error("Failed to create formsetting"),
+                    error: error.stack,
+                    userId
+                })
+            }
+        }
+    };
 }
 
 // TODO atm the whole data obj gets overwritten, enable that a single field(s) can be updated
 function updateFormsetting(db, userId, data) {
     return new Promise((resolve, reject) => {
-        db.query("UPDATE form_settings SET data = $1::json WHERE id = $3::uuid", [data, userId], (error, result) => {
+        db.query("UPDATE form_settings SET data = $1::json WHERE id = $2::uuid", [data, userId], (error, result) => {
             if(error) {
                 return reject( {
                     // type: "FormsettingNotUpdated",
@@ -59,4 +71,10 @@ function ensureFormsettingsDbExists(db) {
             console.error("Failed to ensure formsetting database. May see erratic behaviour.", error);
         }
     });
+}
+
+function getDefaultFormsettings() {
+    return {
+        "Cleaning" : "1"
+    }
 }

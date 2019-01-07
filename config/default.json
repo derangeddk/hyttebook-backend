@@ -4,6 +4,7 @@
         "host": "localhost",
         "user": "postgres",
         "password": "postgres",
-        "database": "postgres"
+        //"database": "postgres"
+        "database": "hyttebooking"
     }
 }
