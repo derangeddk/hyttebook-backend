@@ -1,4 +1,4 @@
-module.exports = (users) => async (req, res) => {
+module.exports = (users, formsettings) => async (req, res) => {
     let { username, password } = req.body;
 
     if(!username) {
@@ -10,5 +10,6 @@ module.exports = (users) => async (req, res) => {
     }
 
     let user = await users.create(username, password);
+    await formsettings.create(user);
     res.send(user);
 };
