@@ -10,6 +10,6 @@ module.exports = (users, formsettings) => async (req, res) => {
     }
 
     let user = await users.create(username, password);
-    await formsettings.create(user);
+    await formsettings.create(user.id);
     res.send(user);
 };

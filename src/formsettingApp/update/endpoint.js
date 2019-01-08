@@ -4,7 +4,7 @@ module.exports = (formsettings) => async (req, res) => {
         res.send({error: "formsettings not valid"});
     }
 
-    let response = await formsettings.set(user, data);
+    let response = await formsettings.set(user.id, data);
 
     res.send("formsettings updated");
 }
