@@ -1,7 +1,8 @@
 const createEndpoint = require("../../src/users/create/endpoint");
+const createFormsettingEndpoint = require("../../src/formsettingApp/create/endpoint")
 
 describe("create endpoint", function() {
-    it("creates a user with a username and a password", async function() {
+    it("creates a user with a username, password and formsettings", async function() {
         //Setup
         let newUser = { id: "Lol" };
 
@@ -9,7 +10,11 @@ describe("create endpoint", function() {
             create: jasmine.createSpy("users.create", async () => newUser).and.callThrough()
         };
 
-        let endpoint = createEndpoint(users);
+        let formsettings = {
+            create: jasmine.createSpy("formsettings.create")
+        };
+
+        let endpoint = createEndpoint(users, formsettings);
 
         let req = {
             body: {
@@ -28,5 +33,6 @@ describe("create endpoint", function() {
         //Evaluate
         expect(users.create).toHaveBeenCalledWith(req.body.username, req.body.password);
         expect(res.send).toHaveBeenCalledWith(newUser);
+        expect(formsettings.create).toHaveBeenCalledWith(newUser);
     });
 });
