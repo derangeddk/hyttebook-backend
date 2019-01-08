@@ -75,6 +75,6 @@ function ensureFormsettingsDbExists(db) {
 
 function getDefaultFormsettings() {
     return {
-        "Cleaning" : "1"
+        cleaning : true
     }
 }
