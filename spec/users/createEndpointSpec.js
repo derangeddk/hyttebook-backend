@@ -1,5 +1,4 @@
-const createEndpoint = require("../../src/users/create/endpoint");
-const createFormsettingEndpoint = require("../../src/formsettingApp/create/endpoint")
+const createEndpoint = require("../../src/users/app/create/endpoint");
 
 describe("create endpoint", function() {
     it("creates a user with a username, password and formsettings", async function() {
@@ -33,6 +32,6 @@ describe("create endpoint", function() {
         //Evaluate
         expect(users.create).toHaveBeenCalledWith(req.body.username, req.body.password);
         expect(res.send).toHaveBeenCalledWith(newUser);
-        expect(formsettings.create).toHaveBeenCalledWith(newUser);
+        expect(formsettings.create).toHaveBeenCalledWith(newUser.id);
     });
 });
