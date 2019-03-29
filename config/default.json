@@ -1,3 +1,9 @@
 {
-    "port": 4752
+    "port": 4752,
+    "postgres": {
+        "user": "postgres",
+        "host": "localhost",
+        "database": "hytte-index",
+        "password": "postgres"
+    }
 }

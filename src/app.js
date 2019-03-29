@@ -3,9 +3,11 @@ const fs = require("fs");
 const path = require("path");
 const dummyScript = fs.readFileSync(path.join(__dirname, "dummyScript.js"), "utf8");
 const usersApp = require("./users/app");
+const bodyParser = require("body-parser");
 
 module.exports = (port, users) => {
     let app = express();
+    app.use(bodyParser.json());
 
     app.get("/includes/:id/booking.js", (req, res) => {
         res.set("Content-Type", "application/javascript");
@@ -13,7 +15,7 @@ module.exports = (port, users) => {
     });
 
     app.use("/users", usersApp(users));
-    
+
     return {
         start: () => new Promise((resolve, reject) => {
             app.listen(port, (error) => {
