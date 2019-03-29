@@ -3,7 +3,7 @@
     "postgres": {
         "user": "postgres",
         "host": "localhost",
-        "database": "hytte-index",
+        "database": "hytte_index",
         "password": "postgres"
     }
 }
