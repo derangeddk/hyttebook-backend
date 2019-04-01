@@ -4,7 +4,7 @@ module.exports = (db) => {
     ensureUsersTableExists(db);
 
     return {
-        create: createUser,
+        create: (username, password) => createUser(db, username, password),
     };
 };
 
@@ -45,6 +45,7 @@ async function tableExists(db) {
 
     return result;
 }
+
 
 async function createUser(db, username, password) {
     let id = uuid.v4();
