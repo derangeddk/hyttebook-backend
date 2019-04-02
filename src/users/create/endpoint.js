@@ -43,7 +43,7 @@ function validateHutName(hutName, requestErrors) {
     hutName = hutName.trim();
     if(hutName.length < 3) {
         requestErrors.hutName.push({
-            code: "TOO SHORT",
+            code: "FORMAT",
             da: "Det indtastede hytte navn er for kort",
             value: hutName
         });
@@ -67,7 +67,7 @@ function validateFullName(fullName, requestErrors) {
 
     if(fullName.length < 1) {
         requestErrors.fullName.push({
-            code: "TOO SHORT",
+            code: "FORMAT",
             da: "Venligst indtast et længere navn",
             value: fullName
         });
@@ -92,7 +92,7 @@ function validateUsername(username, requestErrors) {
 
     if(username.length < 1) {
         requestErrors.username.push({
-            code: "TOO SHORT",
+            code: "FORMAT",
             da: "Venligst indtast et længere brugernavn",
             value: username
         });
@@ -117,7 +117,7 @@ function validateEmail(email, requestErrors) {
 
     if(!email.match(/^.+@.+$/)) {
         requestErrors.email.push({
-            code: "INVALID FORMAT",
+            code: "FORMAT",
             da: "Email formatet var ikke overholdt, prøv igen",
             value: email
         });
@@ -129,5 +129,23 @@ function validateEmail(email, requestErrors) {
 }
 
 function validatePassword(password, requestErrors) {
+    if(!password) {
+        requestErrors.password.push({
+            code: "MISSING",
+            da: "Indtast venligst et password"
+        });
+        requestErrors.errorCount++;
+        return;
+    }
+
+    password = password.trim();
+
+    if(!password.match(/^(?=.*[a-zA-Z])(?=.*\d).{4,}$/)) {
+        requestErrors.password.push({
+            code: "FORMAT",
+            da: "Dit password skal være minimum 4 karaktere langt og indholde mindst et tal og et bogstav"
+        });
+    }
+
     return password;
 }
