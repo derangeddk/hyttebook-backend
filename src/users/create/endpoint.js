@@ -27,7 +27,7 @@ module.exports = (users) => async (req, res) => {
 
     console.log(email + ' ' + password);
 
-    let user = await users.create(email, password);
+    let user = await users.create(username, password, email, hutName, fullName);
     res.send(user);
 };
 

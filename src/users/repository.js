@@ -4,7 +4,7 @@ module.exports = (db) => {
     ensureUsersTableExists(db);
 
     return {
-        create: (username, password) => createUser(db, username, password),
+        create: (username, password, email, hutName, fullName) => createUser(db, username, password, email, hutName, fullName),
         authenticate: (username, password) =>  authenticate(db, username, password),
     };
 };
@@ -48,7 +48,7 @@ async function tableExists(db) {
 }
 
 
-async function createUser(db, username, password) {
+async function createUser(db, username, password, email, hutName, fullName) {
     let id = uuid.v4();
     let now = (new Date()).toISOString();
     let passwordHash = 1;
@@ -75,7 +75,10 @@ async function createUser(db, username, password) {
             salt,
             {
                 createdAt: now,
-                updatedAt: now
+                updatedAt: now,
+                email,
+                hutName,
+                fullName
             }
         ]
     );
@@ -97,6 +100,10 @@ async function authenticate(db, username, password) {
              username
          ]
     );
+
+    if(result.rows.length != 1) {
+        throw new Error("Couldn't find a user");
+    }
 
     return { token: 1, user: result.rows[0] };
 }
