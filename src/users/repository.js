@@ -76,6 +76,7 @@ async function createUser(db, username, password, email, hutName, fullName) {
             {
                 createdAt: now,
                 updatedAt: now,
+                username,
                 email,
                 hutName,
                 fullName
