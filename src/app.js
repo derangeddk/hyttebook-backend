@@ -4,6 +4,7 @@ const path = require("path");
 const dummyScript = fs.readFileSync(path.join(__dirname, "dummyScript.js"), "utf8");
 const usersApp = require("./users/app");
 const bodyParser = require("body-parser");
+const loginEndpoint = require('./login/endpoint');
 
 module.exports = (port, users) => {
     let app = express();
@@ -18,6 +19,8 @@ module.exports = (port, users) => {
         res.set("Content-Type", "application/javascript");
         res.send(dummyScript);
     });
+
+    app.post("/login", loginEndpoint(users));
 
     app.use("/users", usersApp(users));
 

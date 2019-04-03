@@ -5,6 +5,7 @@ module.exports = (db) => {
 
     return {
         create: (username, password) => createUser(db, username, password),
+        authenticate: (username, password) =>  authenticate(db, username, password),
     };
 };
 
@@ -77,10 +78,25 @@ async function createUser(db, username, password) {
                 updatedAt: now
             }
         ]
-    )
-    .catch((error) => {
-        console.log("something went wrong upon inserting an admin user: ", error.message);
-    });
+    );
 
     return { id, username };
+}
+
+async function authenticate(db, username, password) {
+    let result = await db.query(
+        `SELECT
+            id,
+            passwordHash,
+            salt,
+            data
+         FROM users
+         WHERE username = $1::text
+         `,
+         [
+             username
+         ]
+    );
+
+    return { token: 1, user: result.rows[0] };
 }
