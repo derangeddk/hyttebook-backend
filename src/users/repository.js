@@ -19,6 +19,7 @@ async function ensureUsersTableExists(db) {
             `CREATE TABLE users(
                 id uuid PRIMARY KEY,
                 username text UNIQUE NOT NULL,
+                email text UNIQUE NOT NULL,
                 passwordHash text NOT NULL,
                 salt text NOT NULL,
                 data json NOT NULL
@@ -34,17 +35,16 @@ async function ensureUsersTableExists(db) {
 }
 
 async function tableExists(db) {
-    let result = await db.query(
-        `SELECT 'public.users'::regclass`
-    )
-    .then(() => {
-        return true;
-    })
-    .catch(error => {
+    try {
+        await db.query(
+            `SELECT 'public.users'::regclass`
+        );
+    } catch(error) {
+        console.error('No users table was found. This was the error: ', error);
         return false;
-    })
+    }
 
-    return result;
+    return true;
 }
 
 
@@ -53,38 +53,47 @@ async function createUser(db, username, password, email, hutName, fullName) {
     let now = (new Date()).toISOString();
     let passwordHash = 1;
     let salt = 1;
-    await db.query(
-        `INSERT INTO users (
-            id,
-            username,
-            passwordHash,
-            salt,
-            data
-            )
-        VALUES (
-            $1::uuid,
-            $2::text,
-            $3::text,
-            $4::text,
-            $5::json
-        )`,
-        [
-            id,
-            username,
-            passwordHash,
-            salt,
-            {
-                createdAt: now,
-                updatedAt: now,
+
+    try {
+        await db.query(
+            `INSERT INTO users (
+                id,
                 username,
                 email,
-                hutName,
-                fullName
-            }
-        ]
-    );
+                passwordHash,
+                salt,
+                data
+                )
+            VALUES (
+                $1::uuid,
+                $2::text,
+                $3::text,
+                $4::text,
+                $5::text,
+                $6::json
+            )`,
+            [
+                id,
+                username,
+                email,
+                passwordHash,
+                salt,
+                {
+                    createdAt: now,
+                    updatedAt: now,
+                    username,
+                    email,
+                    hutName,
+                    fullName
+                }
+            ]
+        );
+    } catch(error) {
+        console.error("Failed to create user", error);
+        return { error: error.detail };
+    }
 
-    return { id, username };
+    return { id, username, email };
 }
 
 async function authenticate(db, username, password) {
