@@ -1,4 +1,5 @@
 const uuid = require('uuid');
+const crypto = require('crypto');
 
 module.exports = (db) => {
     ensureUsersTableExists(db);
@@ -51,8 +52,8 @@ async function tableExists(db) {
 async function createUser(db, username, password, email, hutName, fullName) {
     let id = uuid.v4();
     let now = (new Date()).toISOString();
-    let passwordHash = 1;
-    let salt = 1;
+    let salt = getSalt(16);
+    let passwordHash = hashPassword(password, salt);
 
     try {
         await db.query(
@@ -113,7 +114,29 @@ async function authenticate(db, username, password) {
 
     if(result.rows.length != 1) {
         throw new Error("Couldn't find a user");
+
+
+    if(!hashedPasswordAndTypedPasswordMatch(result.rows[0].salt, result.rows[0].passwordhash, password)){
+        throw new Error("The password was incorrect")
     }
 
-    return { token: 1, user: result.rows[0] };
+    return { token: 1, user: result.rows[0].data };
+}
+
+function getSalt(saltLength) {
+    return crypto.randomBytes(Math.ceil(saltLength/2)).toString('hex').slice(0,saltLength);
+};
+
+function hashPassword(password, salt) {
+    let hash = crypto.createHmac('sha512', salt);
+    hash.update(password);
+    return hash.digest('hex');
+}
+
+function hashedPasswordAndTypedPasswordMatch(salt, passwordHash, clearTextPassword) {
+    let hashedClearTextPassword = hashPassword(clearTextPassword, salt);
+
+    return hashedClearTextPassword === passwordHash ? true : false;
+}
+
 }
