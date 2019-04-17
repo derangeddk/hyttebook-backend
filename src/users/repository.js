@@ -10,6 +10,7 @@ module.exports = (db) => {
     };
 };
 
+
 async function ensureUsersTableExists(db) {
     if (await tableExists(db)){
         return;
@@ -41,7 +42,7 @@ async function tableExists(db) {
             `SELECT 'public.users'::regclass`
         );
     } catch(error) {
-        console.error('No users table was found. This was the error: ', error);
+        console.error('No users table was found. An attempt at creating one will now proceed. This was the error: ', error);
         return false;
     }
 
@@ -90,30 +91,50 @@ async function createUser(db, username, password, email, hutName, fullName) {
             ]
         );
     } catch(error) {
-        console.error("Failed to create user", error);
-        return { error: error.detail };
+        if(error.constraint == 'users_username_key') {
+            let error = new Error("A user with that username already exists");
+            error.code = "DUPLICATE";
+            throw error;
+        }
+        if(error.constraint == 'users_email_key') {
+            let error = new Error("A user with that email already exists");
+            error.code = "DUPLICATE";
+            throw error;
+        }
+        if(error.constraint == 'users_pkey') {
+            let error = new Error("A user with that id already exists");
+            error.code = "DUPLICATE";
+            throw error;
+        }
     }
 
     return { id, username, email };
 }
 
 async function authenticate(db, username, password) {
-    let result = await db.query(
-        `SELECT
-            id,
-            passwordHash,
-            salt,
-            data
-         FROM users
-         WHERE username = $1::text
-         `,
-         [
-             username
-         ]
-    );
+    let result;
+    try{
+        result = await db.query(
+            `SELECT
+                id,
+                passwordHash,
+                salt,
+                data
+             FROM users
+             WHERE username = $1::text
+             `,
+             [
+                 username
+             ]
+        );
+    } catch(error) {
+        console.error("could not authenticate the user. This was the error: ", error);
+    }
+
 
     if(result.rows.length != 1) {
-        throw new Error("Couldn't find a user");
+        throw new Error("Couldn't find the user");
+    }
 
 
     if(!hashedPasswordAndTypedPasswordMatch(result.rows[0].salt, result.rows[0].passwordhash, password)){
@@ -137,6 +158,4 @@ function hashedPasswordAndTypedPasswordMatch(salt, passwordHash, clearTextPasswo
     let hashedClearTextPassword = hashPassword(clearTextPassword, salt);
 
     return hashedClearTextPassword === passwordHash ? true : false;
-}
-
 }
