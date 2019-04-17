@@ -5,8 +5,10 @@ const dummyScript = fs.readFileSync(path.join(__dirname, "dummyScript.js"), "utf
 const usersApp = require("./users/app");
 const bodyParser = require("body-parser");
 const loginEndpoint = require('./login/endpoint');
+const formsApp = require('./forms/app');
 
-module.exports = (port, users) => {
+module.exports = (port, repos) => {
+    let { users, forms } = repos;
     let app = express();
     app.use(bodyParser.json());
     app.use(function(req, res, next) {
@@ -23,6 +25,8 @@ module.exports = (port, users) => {
     app.post("/login", loginEndpoint(users));
 
     app.use("/users", usersApp(users));
+    app.use("/forms", formsApp(forms));
+
 
     return {
         start: () => new Promise((resolve, reject) => {
