@@ -111,7 +111,7 @@ async function createUser(db, username, password, email, hutName, fullName) {
     return { id, username, email };
 }
 
-async function authenticate(db, username, password) {
+async function authenticate(db, email, password) {
     let result;
     try{
         result = await db.query(
@@ -121,10 +121,10 @@ async function authenticate(db, username, password) {
                 salt,
                 data
              FROM users
-             WHERE username = $1::text
+             WHERE email = $1::text
              `,
              [
-                 username
+                 email
              ]
         );
     } catch(error) {
@@ -133,12 +133,16 @@ async function authenticate(db, username, password) {
 
 
     if(result.rows.length != 1) {
-        throw new Error("Couldn't find the user");
+        let error = new Error("Couldn't find a user with that email");
+        error.code = "NON-EXISTENT";
+        throw error;
     }
 
 
     if(!hashedPasswordAndTypedPasswordMatch(result.rows[0].salt, result.rows[0].passwordhash, password)){
-        throw new Error("The password was incorrect")
+        let error = new Error("The password was incorrect")
+        error.code = "INCORRECT";
+        throw error;
     }
 
     return { token: 1, user: result.rows[0].data };

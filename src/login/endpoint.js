@@ -1,7 +1,26 @@
 module.exports = (users) => async (req, res) => {
-    let { username, password } = req.body;
+    let { email, password } = req.body;
 
-    let { token, user } =  await users.authenticate(username, password);
+    let result;
+
+    try{
+        result =  await users.authenticate(email, password);
+    } catch(error) {
+        if(error.code) {
+            if(error.code) {
+                res.status(406).json({
+                    code: error.code,
+                    message: error.message
+                });
+                return;
+            }
+            if(!error.code) {
+                res.status(500).json({message: "An error occured that you can't help. Please refresh and start over"});
+            }
+        }
+    }
+
+    let { token, user } = result;
 
     res.send({token, user});
 };
