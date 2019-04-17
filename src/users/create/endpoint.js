@@ -38,8 +38,6 @@ module.exports = (users) => async (req, res) => {
         }
         if(!error.code) {
             res.status(500).json({message: "An error occured that you can't help. Please refresh and start over"});
-            let error = new Error("A user with that email already exists");
-            error.code = "DUPLICATE";
         }
     }
 
