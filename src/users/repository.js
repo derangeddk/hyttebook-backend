@@ -65,7 +65,7 @@ async function createUser(db, username, password, email, hutName, fullName) {
                 passwordHash,
                 salt,
                 data
-                )
+            )
             VALUES (
                 $1::uuid,
                 $2::text,
