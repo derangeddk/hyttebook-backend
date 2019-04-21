@@ -5,7 +5,7 @@ module.exports = (db) => {
     ensureUsersTableExists(db);
 
     return {
-        create: (username, password, email, hutName, fullName) => createUser(db, username, password, email, hutName, fullName),
+        create: (username, password, email, fullName) => createUser(db, username, password, email, fullName),
         authenticate: (username, password) =>  authenticate(db, username, password),
     };
 };
@@ -50,7 +50,7 @@ async function tableExists(db) {
 }
 
 
-async function createUser(db, username, password, email, hutName, fullName) {
+async function createUser(db, username, password, email, fullName) {
     let id = uuid.v4();
     let now = (new Date()).toISOString();
     let salt = getSalt(16);
@@ -85,7 +85,6 @@ async function createUser(db, username, password, email, hutName, fullName) {
                     updatedAt: now,
                     username,
                     email,
-                    hutName,
                     fullName
                 }
             ]

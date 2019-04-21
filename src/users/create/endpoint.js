@@ -1,16 +1,13 @@
 module.exports = (users) => async (req, res) => {
-    let { hutName, fullName, username, email, password } = req.body;
+    let { fullName, username, email, password } = req.body;
 
     let requestErrors = {
         errorCount: 0,
-        hutName: [],
         fullName: [],
         username: [],
         email: [],
         password: []
     };
-
-    hutName = validateHutName(hutName, requestErrors);
 
     fullName = validateFullName(fullName, requestErrors);
 
@@ -27,10 +24,11 @@ module.exports = (users) => async (req, res) => {
 
     let result;
     try {
-        result = await users.create(username, password, email, hutName, fullName);
+        result = await users.create(username, password, email, fullName);
     } catch(error) {
         if(error.code) {
-            res.status(406).json({
+            res.setHeader("content-type", "application/json");
+            res.status(406).send({
                 code: error.code,
                 message: error.message
             });
@@ -38,34 +36,14 @@ module.exports = (users) => async (req, res) => {
         }
         if(!error.code) {
             res.status(500).json({message: "An error occured that you can't help. Please refresh and start over"});
+            return;
         }
     }
 
     console.log(username + " " + email);
+    res.setHeader("Content-Type", "application/json");
     res.send(result);
 };
-
-function validateHutName(hutName, requestErrors) {
-    if(!hutName) {
-        requestErrors.hutName.push({
-            code: "MISSING",
-            da: "Angiv venligst et hytte navn"
-        });
-        requestErrors.errorCount++;
-        return;
-    }
-    hutName = hutName.trim();
-    if(hutName.length < 3) {
-        requestErrors.hutName.push({
-            code: "FORMAT",
-            da: "Det indtastede hytte navn er for kort",
-            value: hutName
-        });
-        requestErrors.errorCount++;
-        return;
-    }
-    return hutName;
-}
 
 function validateFullName(fullName, requestErrors) {
     if(!fullName) {
