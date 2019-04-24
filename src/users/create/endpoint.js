@@ -133,10 +133,13 @@ function validatePassword(password, requestErrors) {
     password = password.trim();
 
     if(!password.match(/^(?=.*[a-zA-Z])(?=.*\d).{4,}$/)) {
+        console.log("passed");
         requestErrors.password.push({
             code: "FORMAT",
             da: "Dit password skal være minimum 4 karaktere langt og indholde mindst et tal og et bogstav"
         });
+        requestErrors.errorCount++;
+        return;
     }
 
     return password;
