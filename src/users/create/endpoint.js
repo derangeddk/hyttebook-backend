@@ -60,7 +60,7 @@ function validateFullName(fullName, requestErrors) {
     if(fullName.length < 1) {
         requestErrors.fullName.push({
             code: "FORMAT",
-            da: "Venligst indtast et længere navn",
+            da: "Skal være længere end et bogstav",
             value: fullName
         });
         requestErrors.errorCount++;
@@ -85,7 +85,7 @@ function validateUsername(username, requestErrors) {
     if(username.length < 1) {
         requestErrors.username.push({
             code: "FORMAT",
-            da: "Venligst indtast et længere brugernavn",
+            da: "skal være længere end et bogstav",
             value: username
         });
         requestErrors.errorCount++;
@@ -110,7 +110,7 @@ function validateEmail(email, requestErrors) {
     if(!email.match(/^.+@.+$/)) {
         requestErrors.email.push({
             code: "FORMAT",
-            da: "Email formatet var ikke overholdt, prøv igen",
+            da: "skal have en gyldig email",
             value: email
         });
         requestErrors.errorCount++;
@@ -133,7 +133,6 @@ function validatePassword(password, requestErrors) {
     password = password.trim();
 
     if(!password.match(/^(?=.*[a-zA-Z])(?=.*\d).{4,}$/)) {
-        console.log("passed");
         requestErrors.password.push({
             code: "FORMAT",
             da: "Dit password skal være minimum 4 karaktere langt og indholde mindst et tal og et bogstav"
