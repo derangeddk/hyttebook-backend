@@ -27,6 +27,7 @@
     "pg": "^7.9.0"
   },
   "devDependencies": {
+    "cucumber": "^5.1.0",
     "jasmine": "^3.3.0",
     "jasmine-theories": "^0.1.3"
   }
