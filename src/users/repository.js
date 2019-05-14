@@ -91,20 +91,22 @@ async function createUser(db, username, password, email, fullName) {
         );
     } catch(error) {
         if(error.constraint == 'users_username_key') {
-            let error = new Error("A user with that username already exists");
-            error.code = "DUPLICATE";
-            throw error;
+            throw {
+                code: "DUPLICATE",
+                trace: new Error("users_username_key contraint error"),
+                field: "username",
+                error
+            };
         }
         if(error.constraint == 'users_email_key') {
-            let error = new Error("A user with that email already exists");
-            error.code = "DUPLICATE";
-            throw error;
+            throw {
+                code: "DUPLICATE",
+                trace: new Error("users_email_key constraint error"),
+                field: "email",
+                error
+            };
         }
-        if(error.constraint == 'users_pkey') {
-            let error = new Error("A user with that id already exists");
-            error.code = "DUPLICATE";
-            throw error;
-        }
+        throw error;
     }
 
     return { id, username, email };

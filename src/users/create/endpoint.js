@@ -26,18 +26,19 @@ module.exports = (users) => async (req, res) => {
     try {
         result = await users.create(username, password, email, fullName);
     } catch(error) {
-        if(error.code) {
+        if(error.code == "DUPLICATE") {
             res.setHeader("content-type", "application/json");
-            res.status(406).send({
-                code: error.code,
-                message: error.message
+            requestErrors[field].push({
+                code: "DUPLICATE",
+                da: "allerede i brug"
             });
+            requestErrors.errorCount++;
+            res.status(400).send(requestErrors);
             return;
         }
-        if(!error.code) {
-            res.status(500).json({message: "An error occured that you can't help. Please refresh and start over"});
-            return;
-        }
+        console.error("...", error);
+        res.status(500).json({message: "An error occured that you can't help. Please refresh and start over"});
+        return;
     }
 
     console.log(username + " " + email);
@@ -60,8 +61,7 @@ function validateFullName(fullName, requestErrors) {
     if(fullName.length < 1) {
         requestErrors.fullName.push({
             code: "FORMAT",
-            da: "Skal være længere end et bogstav",
-            value: fullName
+            da: "Skal være længere end et bogstav"
         });
         requestErrors.errorCount++;
         return;
@@ -85,8 +85,7 @@ function validateUsername(username, requestErrors) {
     if(username.length < 1) {
         requestErrors.username.push({
             code: "FORMAT",
-            da: "skal være længere end et bogstav",
-            value: username
+            da: "skal være længere end et bogstav"
         });
         requestErrors.errorCount++;
         return;
@@ -110,8 +109,7 @@ function validateEmail(email, requestErrors) {
     if(!email.match(/^.+@.+$/)) {
         requestErrors.email.push({
             code: "FORMAT",
-            da: "skal have en gyldig email",
-            value: email
+            da: "skal have en gyldig email"
         });
         requestErrors.errorCount++;
         return;
@@ -124,18 +122,7 @@ function validatePassword(password, requestErrors) {
     if(!password) {
         requestErrors.password.push({
             code: "MISSING",
-            da: "Indtast venligst et password"
-        });
-        requestErrors.errorCount++;
-        return;
-    }
-
-    password = password.trim();
-
-    if(!password.match(/^(?=.*[a-zA-Z])(?=.*\d).{4,}$/)) {
-        requestErrors.password.push({
-            code: "FORMAT",
-            da: "Dit password skal være minimum 4 karaktere langt og indholde mindst et tal og et bogstav"
+            da: "feltet må ikke være tomt"
         });
         requestErrors.errorCount++;
         return;
