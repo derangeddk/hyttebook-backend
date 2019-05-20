@@ -4,10 +4,11 @@ const { Pool } = require('pg')
 const db = new Pool(config.postgres);
 const users = require("./users/repository")(db);
 const forms = require('./forms/repository')(db);
+const huts = require('./forms/repository')(db);
 
 
 (async function() {
-    let app = createApp(config.port, { users, forms });
+    let app = createApp(config.port, { users, forms, huts });
 
     await app.start();
 })();
