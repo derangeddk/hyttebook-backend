@@ -27,7 +27,7 @@ module.exports = (port, repos) => {
 
     app.use("/users", usersApp(users));
     app.use("/forms", formsApp(forms));
-    app.use("/huts", formsApp(huts));
+    app.use("/huts", hutsApp(huts));
 
 
     return {
