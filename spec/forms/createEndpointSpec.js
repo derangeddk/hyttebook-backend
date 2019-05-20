@@ -1,30 +1,41 @@
 const createEndpoint = require("../../src/forms/create/endpoint");
+const theoretically = require("jasmine-theories");
 
 describe("create endpoint", function() {
-    it("fails if arguments are null", async function() {
+    theoretically.it("fails if %s are null", [
+        "showOrgType",
+        "showBankDetails",
+        "showEan",
+        "showCleaningToggle",
+        "defaultCleaningIncluded",
+        "showArrivalTime",
+        "showDepartureTime",
+        "stdArrivalTime",
+        "stdDepartureTime",
+        "stdInformation",
+    ],
+    async function(nullProperty) {
         let newForm = { id: "test" };
 
         let forms = {
-            create: jasmine.createSpy("forms.create", async () => newForm).and.callThrough()
+            create: jasmine.createSpy("forms.create").and.callFake(async () => newForm)
         };
 
         let endpoint = createEndpoint(forms);
 
-        // let res = jasmine.createSpyObj("res",{["send"]: jasmine.createSpy("res.send"), ["status"]: jasmine.createSpy("res.status")});
-
         let res = {};
 
-        res.send = jasmine.createSpy("send").and.callFake(() => {
+        res.send = jasmine.createSpy("res.send").and.callFake(() => {
             return res;
         });
 
-        res.status = jasmine.createSpy("status").and.callFake(() => {
+        res.status = jasmine.createSpy("res.status").and.callFake(() => {
             return res;
         });
 
         let req = {
             body: {
-                showOrgType: null,
+                showOrgType: true,
                 showBankDetails: false,
                 showEan: false,
                 showCleaningToggle: false,
@@ -37,6 +48,8 @@ describe("create endpoint", function() {
             }
         };
 
+        req.body[nullProperty] = null;
+
         let actualError = null;
         try{
             await endpoint(req, res);
@@ -45,8 +58,20 @@ describe("create endpoint", function() {
         }
 
         expect(actualError).toBe(null);
-        expect(res.status.send).toHaveBeenCalledTimes(1);
 
         expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
+
+        let requestErrors = {
+            errorCount: 1,
+        };
+
+        requestErrors[nullProperty] = {
+            code: "NO VALUE",
+            message : "must be a boolean value"
+        };
+
+        expect(res.send).toHaveBeenCalledWith({requestErrors});
+        expect(res.send).toHaveBeenCalledTimes(1);
     });
 });

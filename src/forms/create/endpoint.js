@@ -7,7 +7,10 @@ module.exports = (forms) => async (req, res) => {
 
     for(var property in formConfigs) {
         if(formConfigs[property] == null) {
-            requestErrors[property] = "must be a boolean value";
+            requestErrors[property] = {
+                code: "NO VALUE",
+                message:  "must be a boolean value"
+            };
             requestErrors.errorCount++;
         }
     }
@@ -22,11 +25,10 @@ module.exports = (forms) => async (req, res) => {
         result = await forms.create(formConfigs);
     } catch(error) {
         console.error("tried to create the form but couldn't: ", error);
-        res.status(500).json({ message: "tried to create the form but couldn't"});
+        res.status(500).json({ error: "tried to create the form but couldn't"});
         return;
     }
 
-    console.log(result);
     res.send(result);
     return;
 }
