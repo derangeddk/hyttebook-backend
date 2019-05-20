@@ -20,6 +20,7 @@ module.exports = (forms) => async (req, res) => {
     } catch(error) {
         console.error("tried to create the form but couldn't: ", error);
         res.status(500).json({ message: "tried to create the form but couldn't"});
+        return;
     }
 
     console.log(result);
