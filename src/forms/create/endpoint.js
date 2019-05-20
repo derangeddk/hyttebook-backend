@@ -1,18 +1,21 @@
 module.exports = (forms) => async (req, res) => {
-    // let {
-    //         showOrgType,
-    //         showBankDetails,
-    //         showEan,
-    //         showCleaningToggle,
-    //         defaultCleaningInclude,
-    //         showArrivalTime,
-    //         showDepartureTime,
-    //         stdArrivalTime,
-    //         stdDepartureTime,
-    //         stdInformation
-    //     } = req.body;
-
     let formConfigs = req.body;
+
+    let requestErrors = {
+        errorCount: 0,
+    };
+
+    for(var property in formConfigs) {
+        if(formConfigs[property] == null) {
+            requestErrors[property] = "must be a boolean value";
+            requestErrors.errorCount++;
+        }
+    }
+
+    if(requestErrors.errorCount) {
+        res.status(400).send({requestErrors});
+        return;
+    }
 
     let result;
     try {
@@ -20,9 +23,10 @@ module.exports = (forms) => async (req, res) => {
     } catch(error) {
         console.error("tried to create the form but couldn't: ", error);
         res.status(500).json({ message: "tried to create the form but couldn't"});
+        return;
     }
 
     console.log(result);
     res.send(result);
-
+    return;
 }
