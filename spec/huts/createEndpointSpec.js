@@ -129,4 +129,68 @@ describe("create endpoint" , function() {
 
         expect(res.send).toHaveBeenCalledWith({requestErrors});
     });
+
+    theoretically.it("fails if %s is missing",[
+        "hutName",
+        "street",
+        "streetNumber",
+        "city",
+        "zipCode",
+        "email",
+        "phone"
+    ], async function(missingArgument) {
+        let req = {
+            body: {
+                hutName: "a hutname for testing puposes",
+                street: "test street",
+                streetNumber: "1",
+                city: "test city",
+                zipCode: "0001",
+                email: "test@test.com",
+                phone: "12345678"
+            }
+        };
+
+        let res = {};
+
+        res.send = jasmine.createSpy("res.send").and.callFake(() => {
+            return res;
+        });
+
+        res.status = jasmine.createSpy("res.status").and.callFake(() => {
+            return res;
+        });
+
+        let newHut = { id: "test" };
+
+        let huts = {
+            create: jasmine.createSpy("huts.create").and.callFake(async () => newHut)
+        }
+
+        let endpoint = createEndpoint(huts);
+
+        req.body[missingArgument] = null;
+
+        let actualError = null;
+        try {
+            await endpoint(req, res);
+        } catch(error) {
+            actualError = error;
+        }
+
+        expect(actualError).toBe(null);
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledTimes(1);
+
+        let requestErrors = {
+            errorCount: 1,
+        };
+        requestErrors[missingArgument] = {
+            code: jasmine.any(String),
+            da: jasmine.any(String)
+        };
+
+        expect(res.send).toHaveBeenCalledWith({requestErrors});
+    });
 });
