@@ -62,15 +62,6 @@ function validateStreet(street, requestErrors) {
     }
 
     return street.trim();
-
-    // if(street.length < 1) {
-    //     requestErrors[street] = {
-    //         code: "FORMAT",
-    //         da: "skal være længere end et bogstav"
-    //     };
-    //     requestErrors.errorCount++;
-    //     return;
-    // }
 }
 
 function validateStreetNumber(streetNumber, requestErrors) {
@@ -95,15 +86,6 @@ function validateCity(city, requestErrors) {
     }
 
     return city.trim();
-
-    // if(city.length < 1) {
-    //     requestErrors[city] = {
-    //         code: "FORMAT",
-    //         da: "skal være længere end et bogstav"
-    //     };
-    //     requestErrors.errorCount++;
-    //     return;
-    // }
 }
 
 function validateZipCode(zipCode, requestErrors) {
@@ -165,13 +147,4 @@ function validatePhone(phone, requestErrors) {
     }
 
     return phone.trim();
-
-    // if(phone.length < 1) {
-    //     requestErrors[phone] = {
-    //         code: "FORMAT",
-    //         da: "skal være længere end et tal"
-    //     };
-    //     requestErrors.errorCount++;
-    //     return;
-    // }
 }
