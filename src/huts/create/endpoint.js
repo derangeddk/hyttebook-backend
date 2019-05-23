@@ -39,7 +39,6 @@ module.exports = (huts) => async (req, res) => {
 };
 
 function validateHutName(hutName, requestErrors) {
-    hutName = hutName.trim();
     if(!hutName) {
         requestErrors.hutName = {
             code: "MISSING",
@@ -48,10 +47,11 @@ function validateHutName(hutName, requestErrors) {
         requestErrors.errorCount++;
         return;
     }
+
+    return hutName.trim();
 }
 
 function validateStreet(street, requestErrors) {
-    street = street.trim();
     if(!street) {
         requestErrors.street = {
             code: "MISSING",
@@ -61,7 +61,7 @@ function validateStreet(street, requestErrors) {
         return;
     }
 
-
+    return street.trim();
 
     // if(street.length < 1) {
     //     requestErrors[street] = {
@@ -85,7 +85,6 @@ function validateStreetNumber(streetNumber, requestErrors) {
 }
 
 function validateCity(city, requestErrors) {
-    city = city.trim();
     if(!city) {
         requestErrors.city = {
             code: "MISSING",
@@ -95,7 +94,7 @@ function validateCity(city, requestErrors) {
         return;
     }
 
-
+    return city.trim();
 
     // if(city.length < 1) {
     //     requestErrors[city] = {
@@ -127,6 +126,8 @@ function validateZipCode(zipCode, requestErrors) {
         requestErrors.errorCount++;
         return;
     }
+
+    return zipCode;
 }
 
 function validateEmail(email, requestErrors) {
@@ -149,10 +150,11 @@ function validateEmail(email, requestErrors) {
         requestErrors.errorCount++;
         return;
     }
+
+    return email;
 }
 
 function validatePhone(phone, requestErrors) {
-    phone = phone.trim();
     if(!phone) {
         requestErrors.phone = {
             code: "MISSING",
@@ -161,6 +163,8 @@ function validatePhone(phone, requestErrors) {
         requestErrors.errorCount++;
         return;
     }
+
+    return phone.trim();
 
     // if(phone.length < 1) {
     //     requestErrors[phone] = {
