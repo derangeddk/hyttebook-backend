@@ -231,4 +231,49 @@ describe("create endpoint" , function() {
         expect(res.send).toHaveBeenCalledTimes(1);
         expect(res.send).toHaveBeenCalledWith(newHut);
     });
+
+    it("fails if the repository explodes", async function() {
+        let req = {
+            body: {
+                hutName: "a hutname for testing puposes",
+                street: "test street",
+                streetNumber: "1",
+                city: "test city",
+                zipCode: "0001",
+                email: "test@test.com",
+                phone: "12345678"
+            }
+        };
+
+        let res = {};
+
+        res.send = jasmine.createSpy("res.send").and.callFake(() => {
+            return res;
+        });
+
+        res.status = jasmine.createSpy("res.status").and.callFake(() => {
+            return res;
+        });
+
+        let huts = {
+            create: jasmine.createSpy("huts.create").and.callFake(async () => {
+                throw new Error("huts repository exploded");
+            })
+        }
+
+        let endpoint = createEndpoint(huts);
+
+        let actualError = null;
+        try {
+            await endpoint(req, res);
+        } catch(error) {
+            actualError = error;
+        }
+
+        expect(actualError).toBe(null);
+        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledWith({ error: "tried to create hut but couldn't"});
+    });
 });

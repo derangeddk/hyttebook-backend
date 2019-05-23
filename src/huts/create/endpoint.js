@@ -31,7 +31,7 @@ module.exports = (huts) => async (req, res) => {
         result = await huts.create(req.body);
     } catch(error) {
         console.error("tried to create the hut but couldn't: ", error);
-        res.status(500).json({ message: "tried to create the hut but couldn't"}).send();
+        res.status(500).send({ error: "tried to create hut but couldn't"});
         return;
     }
 
