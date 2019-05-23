@@ -28,7 +28,7 @@ module.exports = (users) => async (req, res) => {
     } catch(error) {
         if(error.code == "DUPLICATE") {
             res.setHeader("content-type", "application/json");
-            requestErrors[field].push({
+            requestErrors[error.field].push({
                 code: "DUPLICATE",
                 da: "allerede i brug"
             });
@@ -61,7 +61,7 @@ function validateFullName(fullName, requestErrors) {
     if(fullName.length < 1) {
         requestErrors.fullName.push({
             code: "FORMAT",
-            da: "Skal være længere end et bogstav"
+            da: "skal være længere end et bogstav"
         });
         requestErrors.errorCount++;
         return;
@@ -74,7 +74,7 @@ function validateUsername(username, requestErrors) {
     if(!username) {
         requestErrors.username.push({
             code: "MISSING",
-            da: "Indtast venligst et brugernavn"
+            da: "må ikke være tomt"
         });
         requestErrors.errorCount++;
         return;
