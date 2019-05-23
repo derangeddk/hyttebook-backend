@@ -22,7 +22,7 @@ module.exports = (huts) => async (req, res) => {
     validatePhone(phone, requestErrors);
 
     if(requestErrors.errorCount) {
-        res.status(400).send(requestErrors);
+        res.status(400).send({requestErrors});
         return;
     }
 
@@ -41,7 +41,7 @@ module.exports = (huts) => async (req, res) => {
 function validateHutName(hutName, requestErrors) {
     hutName = hutName.trim();
     if(!hutName) {
-        requestErrors[hutName] = {
+        requestErrors.hutName = {
             code: "MISSING",
             da: "Indtast venligst hyttens navn"
         };
@@ -53,7 +53,7 @@ function validateHutName(hutName, requestErrors) {
 function validateStreet(street, requestErrors) {
     street = street.trim();
     if(!street) {
-        requestErrors[street] = {
+        requestErrors.street = {
             code: "MISSING",
             da: "Indtast venligst vejnavn"
         };
@@ -75,7 +75,7 @@ function validateStreet(street, requestErrors) {
 
 function validateStreetNumber(streetNumber, requestErrors) {
     if(!streetNumber) {
-        requestErrors[streetNumber] = {
+        requestErrors.streetNumber = {
             code: "MISSING",
             da: "Indtast venligst vej nummeret"
         };
@@ -87,7 +87,7 @@ function validateStreetNumber(streetNumber, requestErrors) {
 function validateCity(city, requestErrors) {
     city = city.trim();
     if(!city) {
-        requestErrors[city] = {
+        requestErrors.city = {
             code: "MISSING",
             da: "Indtast venligst bynavn"
         };
@@ -109,7 +109,7 @@ function validateCity(city, requestErrors) {
 
 function validateZipCode(zipCode, requestErrors) {
     if(!zipCode) {
-        requestErrors[zipCode] = {
+        requestErrors.zipCode = {
             code: "MISSING",
             da: "Indtast venligst postnummeret"
         };
@@ -120,7 +120,7 @@ function validateZipCode(zipCode, requestErrors) {
     zipCode = zipCode.trim();
 
     if(!zipCode.match(/^[0-9]*$/)) {
-        requestErrors[zipCode] = {
+        requestErrors.zipCode = {
             code: "FORMAT",
             da: "Må kun indeholde tal"
         };
@@ -131,7 +131,7 @@ function validateZipCode(zipCode, requestErrors) {
 
 function validateEmail(email, requestErrors) {
     if(!email) {
-        requestErrors[email] = {
+        requestErrors.email = {
             code: "MISSING",
             da: "Indtast venligst en email"
         };
@@ -142,7 +142,7 @@ function validateEmail(email, requestErrors) {
     email = email.trim();
 
     if(!email.match(/^.+@.+$/)) {
-        requestErrors[email] = {
+        requestErrors.email = {
             code: "FORMAT",
             da: "skal have en gyldig email"
         };
@@ -154,15 +154,13 @@ function validateEmail(email, requestErrors) {
 function validatePhone(phone, requestErrors) {
     phone = phone.trim();
     if(!phone) {
-        requestErrors[phone] = {
+        requestErrors.phone = {
             code: "MISSING",
             da: "Indtast venligst telefonnummer"
         };
         requestErrors.errorCount++;
         return;
     }
-
-
 
     // if(phone.length < 1) {
     //     requestErrors[phone] = {
