@@ -30,7 +30,7 @@ async function tableExists(db) {
         await db.query(
             `SELECT 'public.forms'::regclass`
         );
-    } catch(erro) {
+    } catch(error) {
         return false;
     }
 

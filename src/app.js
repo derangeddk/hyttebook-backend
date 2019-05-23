@@ -6,9 +6,10 @@ const usersApp = require("./users/app");
 const bodyParser = require("body-parser");
 const loginEndpoint = require('./login/endpoint');
 const formsApp = require('./forms/app');
+const hutsApp = require('./huts/app');
 
 module.exports = (port, repos) => {
-    let { users, forms } = repos;
+    let { users, forms, huts } = repos;
     let app = express();
     app.use(bodyParser.json());
     app.use(function(req, res, next) {
@@ -26,6 +27,7 @@ module.exports = (port, repos) => {
 
     app.use("/users", usersApp(users));
     app.use("/forms", formsApp(forms));
+    app.use("/huts", hutsApp(huts));
 
 
     return {
