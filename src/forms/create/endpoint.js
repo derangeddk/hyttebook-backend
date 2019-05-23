@@ -35,7 +35,7 @@ module.exports = (forms) => async (req, res) => {
 
     let result;
     try {
-        result = await forms.create(formConfigs);
+        result = await forms.create(actualFormConfigs);
     } catch(error) {
         console.error("tried to create form but couldn't: ", error);
         res.status(500).send({ error: "tried to create the form but couldn't"});
