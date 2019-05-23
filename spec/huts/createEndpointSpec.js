@@ -193,4 +193,42 @@ describe("create endpoint" , function() {
 
         expect(res.send).toHaveBeenCalledWith({requestErrors});
     });
+
+    it("succeeds if given all the required arguments", async function() {
+        let req = {
+            body: {
+                hutName: "a hutname for testing puposes",
+                street: "test street",
+                streetNumber: "1",
+                city: "test city",
+                zipCode: "0001",
+                email: "test@test.com",
+                phone: "12345678"
+            }
+        };
+
+        let res = {};
+        res.send = jasmine.createSpy("res.send").and.callFake(() => {
+            return res;
+        });
+
+        let newHut = { id: "test" };
+
+        let huts = {
+            create: jasmine.createSpy("huts.create").and.callFake(async () => newHut)
+        }
+
+        let endpoint = createEndpoint(huts);
+
+        let actualError = null;
+        try {
+            await endpoint(req, res);
+        } catch(error) {
+            actualError = error;
+        }
+
+        expect(actualError).toBe(null);
+        expect(res.send).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledWith(newHut);
+    });
 });
