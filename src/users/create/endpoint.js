@@ -18,7 +18,7 @@ module.exports = (users) => async (req, res) => {
     password = validatePassword(password, requestErrors);
 
     if(requestErrors.errorCount) {
-        res.status(400).send(requestErrors);
+        res.send(requestErrors, 400);
         return;
     }
 
@@ -33,7 +33,7 @@ module.exports = (users) => async (req, res) => {
                 da: "allerede i brug"
             });
             requestErrors.errorCount++;
-            res.status(400).send(requestErrors);
+            res.send(requestErrors, 400);
             return;
         }
         console.error("...", error);
