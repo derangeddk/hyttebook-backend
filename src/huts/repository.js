@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 
-module.exports = (db) => {
-    ensureHutsTableExists(db);
+module.exports = async (db) => {
+    await ensureHutsTableExists(db);
     return {
         create: (hutData) => createHut(db, hutData)
     };
@@ -11,17 +11,10 @@ async function ensureHutsTableExists(db) {
     if(await tableExists(db)) {
         return;
     }
-
     try {
-        await db.query(
-            `CREATE TABLE huts(
-                id uuid UNIQUE PRIMARY KEY,
-                data json NOT NULL
-            )`
-        );
+        await db.query("CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)");
     } catch(error) {
-        console.error("failed to create huts table", error);
-        process.exit(1);
+        throw new Error("failed while trying to create 'huts' table", error);
     }
 }
 
@@ -31,28 +24,20 @@ async function tableExists(db) {
             `SELECT 'public.huts'::regclass`
         );
     } catch(error) {
-        return false;
+        if(error.message === 'relation "public.huts" does not exist') {
+            return false;
+        }
+        throw new Error("Tried to assertain the existence of a 'huts'", error);
     }
-
     return true;
 }
 
 async function createHut(db, hutData) {
     let id = uuid.v4();
     let now = (new Date()).toISOString();
-    let {
-        hutName,
-        street,
-        streetNumber,
-        city,
-        zipCode,
-        email,
-        phone
-    } = hutData;
 
-    let result;
     try {
-        result = await db.query(
+        await db.query(
             `INSERT INTO huts(
                 id,
                 data
@@ -66,13 +51,7 @@ async function createHut(db, hutData) {
                 {
                     createAt: now,
                     updateAt: now,
-                    hutName,
-                    street,
-                    streetNumber,
-                    city,
-                    zipCode,
-                    email,
-                    phone
+                    ...hutData
                 }
             ]
         )
@@ -80,6 +59,5 @@ async function createHut(db, hutData) {
         console.error("failed to insert hut", error);
         return;
     }
-
     return id;
 }
