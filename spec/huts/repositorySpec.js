@@ -85,7 +85,7 @@ describe("huts repository" , function() {
             };
 
             let actualError = null;
-            try{
+            try {
                 await createRepository(db);
             } catch(error) {
                 actualError = error;
@@ -93,7 +93,54 @@ describe("huts repository" , function() {
 
             expect(actualError).toBe(null);
             expect(db.query.calls.count(2));
-            expect(db.query.calls.allArgs(["SELECT 'public.huts'::regclass"],['CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']));
+            expect(db.query).toHaveBeenCalledWith('CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)');
+        });
+    });
+
+    describe("createHut function", function() {
+        it("creates a hut and returns an id", async function() {
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async () => {})
+            };
+            let hutData = {
+                hutName: "test hut",
+                street: "test street",
+                streetNumber: "1",
+                city: "test city",
+                zipCode: "2400",
+                email: "test@test.test",
+                phone: "74654010"
+            }
+
+            let actualError = null;
+            let repository = await createRepository(db)
+
+            let id = await repository.create(hutData);
+
+            expect(actualError).toBe(null);
+            expect(db.query).toHaveBeenCalledTimes(2);
+            expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
+                id,
+                data
+            )
+            VALUES(
+                $1::uuid,
+                $2::json
+            )`,
+            [
+                id,
+                {
+                    createdAt: jasmine.any(String),
+                    updatedAt: jasmine.any(String),
+                    hutName: "test hut",
+                    street: "test street",
+                    streetNumber: "1",
+                    city: "test city",
+                    zipCode: "2400",
+                    email: "test@test.test",
+                    phone: "74654010"
+                }
+            ]);
         });
     });
 });

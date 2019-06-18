@@ -49,8 +49,8 @@ async function createHut(db, hutData) {
             [
                 id,
                 {
-                    createAt: now,
-                    updateAt: now,
+                    createdAt: now,
+                    updatedAt: now,
                     ...hutData
                 }
             ]
