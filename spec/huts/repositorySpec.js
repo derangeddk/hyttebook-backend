@@ -2,7 +2,7 @@ const rewire = require("rewire");
 const createRepository = rewire("../../src/huts/repository");
 
 describe("huts repository" , function() {
-    describe("creation function", function() {
+    describe("constructor function", function() {
         it("creates a repository if the huts table already exists",async function() {
             let db = {
                 query: async (q) => {
@@ -96,42 +96,4 @@ describe("huts repository" , function() {
             expect(db.query.calls.allArgs(["SELECT 'public.huts'::regclass"],['CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']));
         });
     });
-    /*describe("ensureHutsTableExists", function() {
-        describe("tableExists", function() {
-            it("succeeds if a table exists", async function() {
-                const tableExists = repository.__get__("tableExists");
-                const mockDb = {
-                    query: jasmine.createSpy("db.query").and.callFake(async () => true)
-                }
-                let theTableExists = await tableExists(mockDb);
-                expect(mockDb.query).toHaveBeenCalledTimes(1);
-                expect(theTableExists).toEqual(true);
-            });
-
-            it("fails if a table does not exist", async function() {
-                const tableExists = repository.__get__("tableExists");
-                const mockDb = {
-                    query: jasmine.createSpy("db.query").and.callFake(async () => {
-                        throw new Error("The huts table do not exist");
-                    })
-                }
-                let theTableExists = await tableExists(mockDb);
-                expect(mockDb.query).toHaveBeenCalledTimes(1);
-                expect(theTableExists).toEqual(false);
-            });
-        });
-
-        it("fails if postgres explodes", async function() {
-            let ensureHutsTableExists = repository.__get__("ensureHutsTableExists");
-            let mockDb = {
-                query: jasmine.createSpy("db.query").and.callFake(async () => {
-                    throw new Error("Oooops, postgres exploded");
-                })
-            }
-            let actualError = await ensureHutsTableExists(mockDb);
-
-            expect(actualError).toEqual("failed to create huts table");
-        });
-
-    });*/
 });
