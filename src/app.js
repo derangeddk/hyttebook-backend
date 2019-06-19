@@ -7,9 +7,10 @@ const bodyParser = require("body-parser");
 const loginEndpoint = require('./login/endpoint');
 const formsApp = require('./forms/app');
 const hutsApp = require('./huts/app');
+const { promisify } = require('util');
 
 module.exports = (port, repos) => {
-    let { users, forms, huts } = repos;
+    let { db, users, forms, huts } = repos;
     let app = express();
     app.use(bodyParser.json());
     app.use(function(req, res, next) {
@@ -29,16 +30,22 @@ module.exports = (port, repos) => {
     app.use("/forms", formsApp(forms));
     app.use("/huts", hutsApp(huts));
 
-
+    let server;
     return {
         start: () => new Promise((resolve, reject) => {
-            app.listen(port, (error) => {
+            server = app.listen(port, (error) => {
                 if(error) {
                     return reject(error);
                 }
                 console.log("Running server on port " + port);
                 resolve();
             });
-        })
+        }),
+        stop: async () => {
+            let close = promisify(callback => server.close(callback));
+            await close();
+            console.log("server has been shut down");
+            await db.end();
+        }
     };
 };

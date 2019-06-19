@@ -26,7 +26,8 @@
   "dependencies": {
     "config": "^2.0.1",
     "express": "^4.16.4",
-    "pg": "^7.9.0"
+    "pg": "^7.9.0",
+    "smacker": "0.0.7"
   },
   "devDependencies": {
     "jasmine": "^3.3.0",
