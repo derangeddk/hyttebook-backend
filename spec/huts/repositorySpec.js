@@ -142,5 +142,61 @@ describe("huts repository" , function() {
                 }
             ]);
         });
+
+        fit("fails if postgres throws an error while inserting a new hut", async function() {
+            let queryCounter = 0;
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async (query) => {
+                    queryCounter++;
+                    if(queryCounter === 2) {
+                        throw new Error("postgress exploded while trying to insert a new hut");
+                    }
+                })
+            }
+
+            let repository = await createRepository(db);
+            let id;
+            let actualError = null;
+            let hutData = {
+                hutName: "test hut",
+                street: "test street",
+                streetNumber: "1",
+                city: "test city",
+                zipCode: "2400",
+                email: "test@test.test",
+                phone: "74654010"
+            }
+
+            try {
+                id = await repository.create(hutData);
+            } catch(error) {
+                actualError = error;
+            }
+
+            expect(actualError.message).toBe("tried to insert a new hut into 'huts' tabel");
+            expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
+                id,
+                data
+            )
+            VALUES(
+                $1::uuid,
+                $2::json
+            )`,
+            [
+                jasmine.any(String),
+                {
+                    createdAt: jasmine.any(String),
+                    updatedAt: jasmine.any(String),
+                    hutName: "test hut",
+                    street: "test street",
+                    streetNumber: "1",
+                    city: "test city",
+                    zipCode: "2400",
+                    email: "test@test.test",
+                    phone: "74654010"
+                }
+            ]);
+            expect(id).toEqual(undefined);
+        });
     });
 });

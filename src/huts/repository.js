@@ -56,8 +56,7 @@ async function createHut(db, hutData) {
             ]
         )
     } catch(error) {
-        console.error("failed to insert hut", error);
-        return;
+        throw new Error("tried to insert a new hut into 'huts' tabel", error);
     }
     return id;
 }
