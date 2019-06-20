@@ -30,7 +30,7 @@ async function tableExists(db) {
         if(error.message === 'relation "public.huts" does not exist') {
             return false;
         }
-        throw new Error("Tried to assertain the existence of a 'huts'", error);
+        throw new Error("Tried to assertain the existence of a 'huts' table", error);
     }
     return true;
 }
@@ -61,6 +61,26 @@ async function createHut(db, hutData) {
     } catch(error) {
         throw new Error("tried to insert a new hut into 'huts' tabel", error);
     }
+
+    let formConfigs=  {
+        showOrgType: false,
+        showBankDetails: false,
+        showEan: false,
+        showCleaningToggle: false,
+        defaultCleaningInclude: false,
+        showArrivalTime: false,
+        showDepartureTime: false,
+        stdArrivalTime: false,
+        stdDepartureTime: false,
+        stdInformation: ""
+    };
+
+    try {
+        await createForm(db, formConfigs, id);
+    } catch(error) {
+        throw new Error("failed to implicitly create a form after creating a hut", error);
+    }
+
     return id;
 }
 
