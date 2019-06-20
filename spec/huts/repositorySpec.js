@@ -224,6 +224,28 @@ describe("huts repository" , function() {
             }
 
             expect(actualError).not.toBe(null);
+            expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
+                id,
+                data
+            )
+            VALUES(
+                $1::uuid,
+                $2::json
+            )`,
+            [
+                jasmine.any(String),
+                {
+                    createdAt: jasmine.any(String),
+                    updatedAt: jasmine.any(String),
+                    hutName: "test hut",
+                    street: "test street",
+                    streetNumber: "1",
+                    city: "test city",
+                    zipCode: "2400",
+                    email: "test@test.test",
+                    phone: "74654010"
+                }
+            ]);
             expect(db.query).toHaveBeenCalledWith(`INSERT INTO forms(
                 id,
                 hutId,
@@ -255,7 +277,80 @@ describe("huts repository" , function() {
         });
 
         it("implicitly creates a form after creating a hut", async function() {
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async () => {})
+            };
+            let hutData = {
+                hutName: "test hut",
+                street: "test street",
+                streetNumber: "1",
+                city: "test city",
+                zipCode: "2400",
+                email: "test@test.test",
+                phone: "74654010"
+            }
+            let actualError = null;
+            let repository = await createRepository(db)
+            let hutId;
 
+            try {
+                hutId = await repository.create(hutData);
+            } catch(error) {
+                actualError = error;
+            }
+
+            expect(hutId).not.toBe(undefined);
+            expect(actualError).toBe(null);
+            expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
+                id,
+                data
+            )
+            VALUES(
+                $1::uuid,
+                $2::json
+            )`,
+            [
+                hutId,
+                {
+                    createdAt: jasmine.any(String),
+                    updatedAt: jasmine.any(String),
+                    hutName: "test hut",
+                    street: "test street",
+                    streetNumber: "1",
+                    city: "test city",
+                    zipCode: "2400",
+                    email: "test@test.test",
+                    phone: "74654010"
+                }
+            ]);
+            expect(db.query).toHaveBeenCalledWith(`INSERT INTO forms(
+                id,
+                hutId,
+                data
+            )
+            VALUES(
+                $1::uuid,
+                $2::uuid,
+                $3::json
+            )`,
+            [
+                id = jasmine.any(String),
+                hutId,
+                {
+                    createdAt: jasmine.any(String),
+                    updatedAt: jasmine.any(String),
+                    showOrgType: false,
+                    showBankDetails: false,
+                    showEan: false,
+                    showCleaningToggle: false,
+                    defaultCleaningInclude: false,
+                    showArrivalTime: false,
+                    showDepartureTime: false,
+                    stdArrivalTime: false,
+                    stdDepartureTime: false,
+                    stdInformation: ""
+                }
+            ])
         });
     });
 });

@@ -7,6 +7,7 @@ module.exports = async function ensureFormsTableExists(db) {
         await db.query(
             `CREATE TABLE forms(
                 id uuid UNIQUE PRIMARY KEY,
+                hutId uuid UNIQUE
                 data json NOT NULL
             )`
         );

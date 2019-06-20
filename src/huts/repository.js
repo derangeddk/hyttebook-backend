@@ -135,5 +135,5 @@ async function createForm(db, formConfigs, hutId) {
         throw new Error("failed to insert form", error);
     }
 
-    return { id, formConfigs };
+    return;
 }
