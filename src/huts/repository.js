@@ -1,6 +1,9 @@
 const uuid = require('uuid');
+const ensureFormsTableExists = require("../../src/forms/ensureFormsTableExists");
+
 
 module.exports = async (db) => {
+    await ensureFormsTableExists(db);
     await ensureHutsTableExists(db);
     return {
         create: (hutData) => createHut(db, hutData)
@@ -59,4 +62,58 @@ async function createHut(db, hutData) {
         throw new Error("tried to insert a new hut into 'huts' tabel", error);
     }
     return id;
+}
+
+async function createForm(db, formConfigs, hutId) {
+    let id = uuid.v4();
+    let now = (new Date()).toISOString();
+    let {
+            showOrgType,
+            showBankDetails,
+            showEan,
+            showCleaningToggle,
+            defaultCleaningInclude,
+            showArrivalTime,
+            showDepartureTime,
+            stdArrivalTime,
+            stdDepartureTime,
+            stdInformation
+        } = formConfigs;
+
+    try {
+        await db.query(
+            `INSERT INTO forms(
+                id,
+                hutId,
+                data
+            )
+            VALUES(
+                $1::uuid,
+                $2::uuid,
+                $3::json
+            )`,
+            [
+                id,
+                hutId,
+                {
+                    createdAt: now,
+                    updatedAt: now,
+                    showOrgType,
+                    showBankDetails,
+                    showEan,
+                    showCleaningToggle,
+                    defaultCleaningInclude,
+                    showArrivalTime,
+                    showDepartureTime,
+                    stdArrivalTime,
+                    stdDepartureTime,
+                    stdInformation
+                }
+            ]
+        );
+    } catch(error) {
+        throw new Error("failed to insert form", error);
+    }
+
+    return { id, formConfigs };
 }
