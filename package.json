@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node src/start",
     "example": "npx http-server -- test",
-    "test": "jasmine"
+    "test": "jasmine",
+    "test-cuke": "cucumber-js"
   },
   "repository": {
     "type": "git",
