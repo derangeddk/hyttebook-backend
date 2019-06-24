@@ -41,7 +41,6 @@ module.exports = (users) => async (req, res) => {
         return;
     }
 
-    console.log(username + " " + email);
     res.setHeader("Content-Type", "application/json");
     res.send(result);
 };
