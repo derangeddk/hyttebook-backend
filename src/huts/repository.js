@@ -2,9 +2,9 @@ const uuid = require('uuid');
 const ensureFormsTableExists = require("../../src/forms/ensureFormsTableExists");
 
 
-module.exports = async (db) => {
-    await ensureFormsTableExists(db);
-    await ensureHutsTableExists(db);
+module.exports = (db) => {
+    ensureFormsTableExists(db);
+    ensureHutsTableExists(db);
     return {
         create: (hutData) => createHut(db, hutData)
     };
