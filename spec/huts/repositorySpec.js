@@ -352,5 +352,9 @@ describe("huts repository" , function() {
                 }
             ])
         });
+
+        it("implicitly creates an administrator role connection between the hut and the creating user after creating a hut and a form", async function() {
+
+        });
     });
 });
