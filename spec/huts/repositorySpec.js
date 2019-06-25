@@ -1,5 +1,5 @@
 const rewire = require("rewire");
-const createRepository = rewire("../../src/huts/repository");
+const HutsRepository = rewire("../../src/huts/repository");
 
 describe("huts repository" , function() {
     describe("constructor function", function() {
@@ -11,17 +11,17 @@ describe("huts repository" , function() {
             };
 
             let actualError = null;
-            let repository;
+            let hutsRepository = new HutsRepository(db);
+
             try {
-                repository = await createRepository(db);
-            }
-            catch(error) {
+                await hutsRepository.initialize();
+            } catch(error) {
                 actualError = error;
             }
-            console.log("####", error);
 
             expect(actualError).toBe(null);
-            expect(repository).toEqual({
+            expect(hutsRepository).toEqual({
+                initialize: jasmine.any(Function),
                 create: jasmine.any(Function)
             });
         });
@@ -36,10 +36,11 @@ describe("huts repository" , function() {
             };
 
             let actualError = null;
+            let hutsRepository = new HutsRepository(db);
+
             try {
-                await createRepository(db)
-            }
-            catch(error) {
+                await hutsRepository.initialize();
+            } catch(error) {
                 actualError = error;
             }
 
@@ -62,10 +63,11 @@ describe("huts repository" , function() {
             }
 
             let actualError = null;
+            let hutsRepository = new HutsRepository(db);
+
             try {
-                await createRepository(db)
-            }
-            catch(error) {
+                await hutsRepository.initialize();
+            } catch(error) {
                 actualError = error;
             }
 
@@ -84,8 +86,10 @@ describe("huts repository" , function() {
             };
 
             let actualError = null;
+            let hutsRepository = new HutsRepository(db);
+
             try {
-                await createRepository(db);
+                await hutsRepository.initialize();
             } catch(error) {
                 actualError = error;
             }
@@ -112,11 +116,11 @@ describe("huts repository" , function() {
             }
 
             let actualError = null;
-            let repository = await createRepository(db)
+            let hutsRepository = new HutsRepository(db);
             let id;
 
             try {
-                id = await repository.create(hutData);
+                id = await hutsRepository.create(hutData);
             } catch(error) {
                 actualError = error;
             }
@@ -155,7 +159,7 @@ describe("huts repository" , function() {
                 })
             }
 
-            let repository = await createRepository(db);
+            let hutsRepository = new HutsRepository(db);
             let actualError = null;
             let hutData = {
                 hutName: "test hut",
@@ -168,7 +172,7 @@ describe("huts repository" , function() {
             }
 
             try {
-                id = await repository.create(hutData);
+                id = await hutsRepository.create(hutData);
             } catch(error) {
                 actualError = error;
             }
@@ -216,10 +220,10 @@ describe("huts repository" , function() {
                 phone: "74654010"
             }
             let actualError = null;
-            let repository = await createRepository(db)
+            let hutsRepository = new HutsRepository(db)
 
             try {
-                await repository.create(hutData);
+                await hutsRepository.create(hutData);
             } catch(error) {
                 actualError = error;
             }
@@ -291,11 +295,12 @@ describe("huts repository" , function() {
                 phone: "74654010"
             }
             let actualError = null;
-            let repository = await createRepository(db)
+
+            let hutsRepository = new HutsRepository(db)
             let hutId;
 
             try {
-                hutId = await repository.create(hutData);
+                hutId = await hutsRepository.create(hutData);
             } catch(error) {
                 actualError = error;
             }
