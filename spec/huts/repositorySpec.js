@@ -18,6 +18,7 @@ describe("huts repository" , function() {
             catch(error) {
                 actualError = error;
             }
+            console.log("####", error);
 
             expect(actualError).toBe(null);
             expect(repository).toEqual({
@@ -28,7 +29,7 @@ describe("huts repository" , function() {
         it("explodes if the database throws an error while checking if the huts table exists", async function() {
             let db = {
                 query: jasmine.createSpy("db.query").and.callFake(async (query) => {
-                    if(query == "SELECT 'public.huts'::regclass") {
+                    if(query.startsWith("SELECT 'public.huts'::regclass")) {
                         throw new Error("exploded while checking if huts table exists");
                     }
                 })
@@ -49,10 +50,10 @@ describe("huts repository" , function() {
         it("explodes if the database explodes while creating the huts table, if the table does not already exist", async function() {
             let db = {
                 query: jasmine.createSpy("db.query").and.callFake(async (query) => {
-                    if(query == "SELECT 'public.huts'::regclass") {
+                    if(query.startsWith("SELECT 'public.huts'::regclass")) {
                         throw new Error('relation "public.huts" does not exist');
                     }
-                    if(query == "CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)") {
+                    if(query.startsWith("CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)")) {
                         throw new Error('postgres exploded while creating the huts table');
                     } else {
                         throw new Error("Unexpected db call");
