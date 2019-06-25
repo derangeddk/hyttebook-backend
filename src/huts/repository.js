@@ -34,20 +34,28 @@ async function tableExists(db) {
 }
 
 async function findHut(db, hutId) {
-    let hut;
+    let result;
     try {
-        hut = await db.query(
+        result = await db.query(
             `SELECT * FROM huts
-                WHERE id = $1
-                VALUES($1::uuid)`,
-                [hutId]
+                WHERE id = '${hutId}'`
         )
     } catch(error) {
         throw new Error("tried to find a hut", error);
     }
 
-    return hut;
+    let hut = {
+        id: result.rows[0].id,
+        hutName: result.rows[0].data.hutName,
+        street: result.rows[0].data.street,
+        streetNumber: result.rows[0].data.streetNumber,
+        city: result.rows[0].data.city,
+        zipCode: result.rows[0].data.zipCode,
+        email: result.rows[0].data.email,
+        phone: result.rows[0].data.phone
+    }
 
+    return hut;
 }
 
 async function createHut(db, hutData) {

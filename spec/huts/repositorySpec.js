@@ -384,35 +384,47 @@ describe("huts repository" , function() {
             }
 
             expect(db.query).toHaveBeenCalledWith(`SELECT * FROM huts
-                WHERE id = $1
-                VALUES($1::uuid)`,
-                [hutId]
+                WHERE id = '${hutId}'`
             );
             expect(actualError).not.toBe(null);
             expect(hut).toEqual(undefined);
         });
 
         it("succeeds if a hut with the provided id exists", async function() {
+            let hut = {
+                rows: [
+                    {
+                        id: "some id",
+                        data: {
+                            hutName: "a hutname for testing puposes",
+                            street: "test street",
+                            streetNumber: "1",
+                            city: "test city",
+                            zipCode: "0001",
+                            email: "test@test.com",
+                            phone: "12345678"
+                        }
+                    }
+                ]
+            };
             let db = {
-                query: jasmine.createSpy("db.query").and.callFake(async () => {})
+                query: jasmine.createSpy("db.query").and.callFake(async () => hut)
             };
             let hutsRepository = new HutsRepository(db);
 
             let hutId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
             let actualError = null;
-            let hut;
+            let foundHut;
             try {
-                hut = await hutsRepository.find(hutId);
+                foundHut = await hutsRepository.find(hutId);
             } catch(error) {
                 actualError = error;
             }
 
             expect(db.query).toHaveBeenCalledWith(`SELECT * FROM huts
-                WHERE id = $1
-                VALUES($1::uuid)`,
-                [hutId]
+                WHERE id = '${hutId}'`
             );
-            expect(actualError).toBe(null);
+            expect(actualError).toEqual(null);
         });
     });
 });

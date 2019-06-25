@@ -21,10 +21,12 @@ Then('I should receive a response containing an id', function () {
 });
 
 Then('a hut should exist with the following information:', async function (dataTable) {
-    let expectedHutData = dataTable.hashes();
+    let expectedHutData = dataTable.hashes()[0];
+    expectedHutData.id = this.hutId;
+
     let actualHutData = await this.client.get(`/huts/${this.hutId}`);
 
-    assert.deepStrictEqual(actualHutData, expectedHutData);
+    assert.deepStrictEqual(actualHutData.data, expectedHutData);
 });
 
 
