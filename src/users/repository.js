@@ -1,15 +1,13 @@
 const uuid = require('uuid');
 const crypto = require('crypto');
 
-module.exports = (db) => {
-    ensureUsersTableExists(db);
-
+module.exports = function constructor(db) {
     return {
+        initialize: async () => ensureUsersTableExists(db),
         create: (username, password, email, fullName) => createUser(db, username, password, email, fullName),
         authenticate: (username, password) =>  authenticate(db, username, password),
     };
 };
-
 
 async function ensureUsersTableExists(db) {
     if (await tableExists(db)){
@@ -48,7 +46,6 @@ async function tableExists(db) {
 
     return true;
 }
-
 
 async function createUser(db, username, password, email, fullName) {
     let id = uuid.v4();

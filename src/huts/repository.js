@@ -1,8 +1,8 @@
 const uuid = require('uuid');
 
-module.exports = (db) => {
-    ensureHutsTableExists(db);
+module.exports = function constructor(db) {
     return {
+        initialize: async () => ensureHutsTableExists(db),
         create: (hutData) => createHut(db, hutData)
     };
 };

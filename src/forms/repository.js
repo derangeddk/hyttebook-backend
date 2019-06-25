@@ -1,5 +1,7 @@
 const ensureFormsTableExists = require("../../src/forms/ensureFormsTableExists");
 
-module.exports = (db) => {
-    ensureFormsTableExists(db);
+module.exports = function constructor(db) {
+    return {
+        initialize: async () => ensureFormsTableExists(db),
+    };
 };
