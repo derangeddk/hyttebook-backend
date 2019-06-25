@@ -1,9 +1,10 @@
 const express = require('express');
 const createHutsEndpoint = require('./create/endpoint');
+const getHutsEndpoint = require('./get/endpoint');
 
-module.exports = (huts) => {
+module.exports = (hutsRepository) => {
     let app = express();
-    app.post("/", createHutsEndpoint(huts));
-
+    app.post("/", createHutsEndpoint(hutsRepository));
+    app.get("/:id", getHutsEndpoint(hutsRepository));
     return app;
 };
