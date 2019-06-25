@@ -1,4 +1,4 @@
-module.exports = (forms) => async (req, res) => {
+module.exports = (formsRepository) => async (req, res) => {
     let actualFormConfigs = req.body;
 
     let expectedFormConfigs = [
@@ -35,7 +35,7 @@ module.exports = (forms) => async (req, res) => {
 
     let result;
     try {
-        result = await forms.create(actualFormConfigs);
+        result = await formsRepository.create(actualFormConfigs);
     } catch(error) {
         console.error("tried to create form but couldn't: ", error);
         res.status(500).send({ error: "tried to create the form but couldn't"});
