@@ -3,7 +3,8 @@ const uuid = require('uuid');
 module.exports = function constructor(db) {
     return {
         initialize: async () => ensureHutsTableExists(db),
-        create: (hutData) => createHut(db, hutData)
+        create: (hutData) => createHut(db, hutData),
+        find: (hutId) => findHut(db, hutId),
     };
 };
 
@@ -30,6 +31,23 @@ async function tableExists(db) {
         throw new Error("Tried to assertain the existence of a 'huts' table", error);
     }
     return true;
+}
+
+async function findHut(db, hutId) {
+    let hut;
+    try {
+        hut = await db.query(
+            `SELECT * FROM huts
+                WHERE id = $1
+                VALUES($1::uuid)`,
+                [hutId]
+        )
+    } catch(error) {
+        throw new Error("tried to find a hut", error);
+    }
+
+    return hut;
+
 }
 
 async function createHut(db, hutData) {

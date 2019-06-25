@@ -22,7 +22,8 @@ describe("huts repository" , function() {
             expect(actualError).toBe(null);
             expect(hutsRepository).toEqual({
                 initialize: jasmine.any(Function),
-                create: jasmine.any(Function)
+                create: jasmine.any(Function),
+                find: jasmine.any(Function),
             });
         });
 
@@ -361,6 +362,57 @@ describe("huts repository" , function() {
 
         it("implicitly creates an administrator role connection between the hut and the creating user after creating a hut and a form", async function() {
 
+        });
+    });
+
+    describe("getHut function", function() {
+        it("fails if postgres throws an error while looking for the hut", async function() {
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async () => {
+                    throw new Error("postgres exploded while looking for a hut");
+                })
+            };
+            let hutsRepository = new HutsRepository(db);
+
+            let hutId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
+            let actualError = null;
+            let hut;
+            try {
+                hut = await hutsRepository.find(hutId);
+            } catch(error) {
+                actualError = error;
+            }
+
+            expect(db.query).toHaveBeenCalledWith(`SELECT * FROM huts
+                WHERE id = $1
+                VALUES($1::uuid)`,
+                [hutId]
+            );
+            expect(actualError).not.toBe(null);
+            expect(hut).toEqual(undefined);
+        });
+
+        it("succeeds if a hut with the provided id exists", async function() {
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async () => {})
+            };
+            let hutsRepository = new HutsRepository(db);
+
+            let hutId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
+            let actualError = null;
+            let hut;
+            try {
+                hut = await hutsRepository.find(hutId);
+            } catch(error) {
+                actualError = error;
+            }
+
+            expect(db.query).toHaveBeenCalledWith(`SELECT * FROM huts
+                WHERE id = $1
+                VALUES($1::uuid)`,
+                [hutId]
+            );
+            expect(actualError).toBe(null);
         });
     });
 });
