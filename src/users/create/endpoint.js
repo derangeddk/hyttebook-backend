@@ -1,4 +1,4 @@
-module.exports = (users) => async (req, res) => {
+module.exports = (usersRepository) => async (req, res) => {
     let { fullName, username, email, password } = req.body;
 
     let requestErrors = {
@@ -24,7 +24,7 @@ module.exports = (users) => async (req, res) => {
 
     let result;
     try {
-        result = await users.create(username, password, email, fullName);
+        result = await usersRepository.create(username, password, email, fullName);
     } catch(error) {
         if(error.code == "DUPLICATE") {
             res.setHeader("content-type", "application/json");

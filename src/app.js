@@ -9,9 +9,9 @@ const formsApp = require('./forms/app');
 const hutsApp = require('./huts/app');
 const { promisify } = require('util');
 const { Pool } = require('pg')
-const Users = require("./users/repository");
-const Forms = require('./forms/repository');
-const Huts = require('./huts/repository');
+const UsersRepository = require("./users/repository");
+const FormsRepository = require('./forms/repository');
+const HutsRepository = require('./huts/repository');
 
 module.exports = (config) => {
     let app = express();
@@ -28,22 +28,22 @@ module.exports = (config) => {
     });
 
     const db = new Pool(config.postgres);
-    let users = new Users(db);
-    let forms = new Forms(db);
-    let huts = new Huts(db);
-    app.post("/login", loginEndpoint(users));
-    app.use("/users", usersApp(users));
-    app.use("/forms", formsApp(forms));
-    app.use("/huts", hutsApp(huts));
+    let usersRepository = new UsersRepository(db);
+    let formsRepository = new FormsRepository(db);
+    let hutsRepository = new HutsRepository(db);
+    app.post("/login", loginEndpoint(usersRepository));
+    app.use("/users", usersApp(usersRepository));
+    app.use("/forms", formsApp(formsRepository));
+    app.use("/huts", hutsApp(hutsRepository));
 
     let server;
     return {
         start: async () => {
             //assert db start readiness
             await db.query("SELECT now();")
-            await users.initialize();
-            await forms.initialize();
-            await huts.initialize();
+            await usersRepository.initialize();
+            await formsRepository.initialize();
+            await hutsRepository.initialize();
 
             const listen = promisify(callback => {
                 server = app.listen(config.port, callback)

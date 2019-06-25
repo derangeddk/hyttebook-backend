@@ -1,4 +1,4 @@
-module.exports = (huts) => async (req, res) => {
+module.exports = (hutsRepository) => async (req, res) => {
     let {
         hutName,
         street,
@@ -28,7 +28,7 @@ module.exports = (huts) => async (req, res) => {
 
     let result;
     try {
-        result = await huts.create(req.body);
+        result = await hutsRepository.create(req.body);
     } catch(error) {
         console.error("tried to create the hut but couldn't: ", error);
         res.status(500).send({ error: "tried to create hut but couldn't"});
