@@ -76,7 +76,6 @@ describe("get endpoint", function() {
         } catch(error) {
             actualError = error;
         }
-        console.log("####", form);
 
         expect(actualError).toBe(null);
         expect(res.send).toHaveBeenCalledTimes(1);
