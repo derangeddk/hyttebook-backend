@@ -24,17 +24,24 @@ describe("findForm function", function() {
 
     it("succeeds if a form exists with the provided id", async function() {
         let foundForm =  {
-            hutId: "9bdf21e7-52b8-4529-991b-5f2df9de0323",
-            showOrgType: false,
-            showBankDetails: false,
-            showEan: false,
-            showCleaningToggle: false,
-            defaultCleaningInclude: false,
-            showArrivalTime: false,
-            showDepartureTime: false,
-            stdArrivalTime: false,
-            stdDepartureTime: false,
-            stdInformation: ""
+            rows: [
+                {
+                    id: "some id",
+                    hutId: "9bdf21e7-52b8-4529-991b-5f2df9de0323",
+                    data: {
+                        showOrgType: false,
+                        showBankDetails: false,
+                        showEan: false,
+                        showCleaningToggle: false,
+                        defaultCleaningInclude: false,
+                        showArrivalTime: false,
+                        showDepartureTime: false,
+                        stdArrivalTime: false,
+                        stdDepartureTime: false,
+                        stdInformation: ""
+                    }
+                }
+            ]
         };
 
         let db = {
