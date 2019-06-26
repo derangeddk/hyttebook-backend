@@ -4,6 +4,7 @@ const createFormEndpoint = require('./create/endpoint')
 module.exports = (formsRepository) => {
     let app = express();
     app.post('/', createFormEndpoint(formsRepository));
+    app.get('/:id', createFormEndpoint(formsRepository));
 
     return app;
 };
