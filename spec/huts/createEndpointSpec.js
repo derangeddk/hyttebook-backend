@@ -165,7 +165,7 @@ describe("create endpoint" , function() {
 
         let huts = {
             create: jasmine.createSpy("huts.create").and.callFake(async () => newHut)
-        }
+        };
 
         let endpoint = createEndpoint(huts);
 
@@ -216,7 +216,7 @@ describe("create endpoint" , function() {
 
         let huts = {
             create: jasmine.createSpy("huts.create").and.callFake(async () => newHut)
-        }
+        };
 
         let endpoint = createEndpoint(huts);
 
@@ -259,7 +259,7 @@ describe("create endpoint" , function() {
             create: jasmine.createSpy("huts.create").and.callFake(async () => {
                 throw new Error("huts repository exploded");
             })
-        }
+        };
 
         let endpoint = createEndpoint(huts);
 
