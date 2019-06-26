@@ -5,7 +5,11 @@ module.exports = (formsRepository) => async (req, res) => {
     try {
         form = await formsRepository.find(hutId);
     } catch(error) {
-        console.log("Tried to find a form but couldn't");
+        console.error("Tried to find a form but couldn't");
         res.status(500).send({ error: "Tried to find a form but couldn't" });
+        return;
     }
+
+    res.send(form);
+    return;
 };
