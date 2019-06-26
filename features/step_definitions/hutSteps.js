@@ -33,7 +33,7 @@ Then('a hut should exist with the following information:', async function (dataT
 Then('the hut should have a form', async function () {
     let actualForm = await this.client.get(`/forms/${this.hutId}`);
 
-    assert.deepStrictEqual(actualForm.id, this.hutId);
+    assert.deepStrictEqual(actualForm.data.hutId, this.hutId);
 });
 
 Then('I should admin of a hut named {string}', async function (string) {
