@@ -365,7 +365,7 @@ describe("huts repository" , function() {
         });
     });
 
-    describe("getHut function", function() {
+    describe("findHut function", function() {
         it("fails if postgres throws an error while looking for the hut", async function() {
             let db = {
                 query: jasmine.createSpy("db.query").and.callFake(async () => {
