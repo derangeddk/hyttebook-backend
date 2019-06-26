@@ -35,11 +35,11 @@ describe("create endpoint" , function() {
 
         let newHut = { id: "test" };
 
-        let huts = {
-            create: jasmine.createSpy("huts.create").and.callFake(async () => newHut)
+        let hutsRepository = {
+            create: jasmine.createSpy("hutsRepository.create").and.callFake(async () => newHut)
         }
 
-        let endpoint = createEndpoint(huts);
+        let endpoint = createEndpoint(hutsRepository);
 
         req.body[emptyProperty] = "";
 
@@ -99,11 +99,11 @@ describe("create endpoint" , function() {
 
         let newHut = { id: "test" };
 
-        let huts = {
-            create: jasmine.createSpy("huts.create").and.callFake(async () => newHut)
+        let hutsRepository = {
+            create: jasmine.createSpy("hutsRepository.create").and.callFake(async () => newHut)
         }
 
-        let endpoint = createEndpoint(huts);
+        let endpoint = createEndpoint(hutsRepository);
 
         delete req.body[missingArgument];
 
@@ -163,11 +163,11 @@ describe("create endpoint" , function() {
 
         let newHut = { id: "test" };
 
-        let huts = {
-            create: jasmine.createSpy("huts.create").and.callFake(async () => newHut)
+        let hutsRepository = {
+            create: jasmine.createSpy("hutsRepository.create").and.callFake(async () => newHut)
         };
 
-        let endpoint = createEndpoint(huts);
+        let endpoint = createEndpoint(hutsRepository);
 
         req.body[missingArgument] = null;
 
@@ -214,11 +214,11 @@ describe("create endpoint" , function() {
 
         let newHut = { id: "test" };
 
-        let huts = {
-            create: jasmine.createSpy("huts.create").and.callFake(async () => newHut)
+        let hutsRepository = {
+            create: jasmine.createSpy("hutsRepository.create").and.callFake(async () => newHut)
         };
 
-        let endpoint = createEndpoint(huts);
+        let endpoint = createEndpoint(hutsRepository);
 
         let actualError = null;
         try {
@@ -255,13 +255,13 @@ describe("create endpoint" , function() {
             return res;
         });
 
-        let huts = {
-            create: jasmine.createSpy("huts.create").and.callFake(async () => {
+        let hutsRepository = {
+            create: jasmine.createSpy("hutsRepository.create").and.callFake(async () => {
                 throw new Error("huts repository exploded");
             })
         };
 
-        let endpoint = createEndpoint(huts);
+        let endpoint = createEndpoint(hutsRepository);
 
         let actualError = null;
         try {
