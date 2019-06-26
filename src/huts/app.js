@@ -6,5 +6,6 @@ module.exports = (hutsRepository) => {
     let app = express();
     app.post("/", createHutsEndpoint(hutsRepository));
     app.get("/:id", getHutsEndpoint(hutsRepository));
+
     return app;
 };
