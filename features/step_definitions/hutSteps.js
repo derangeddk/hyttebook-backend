@@ -30,12 +30,13 @@ Then('a hut should exist with the following information:', async function (dataT
 });
 
 
-Then('the hut should have a form', function () {
-    // Write code here that turns the phrase above into concrete actions
-    return 'pending';
+Then('the hut should have a form', async function () {
+    let actualForm = await this.client.get(`/forms/${this.hutId}`);
+
+    assert.deepStrictEqual(actualForm.id, this.hutId);
 });
 
-Then('I should admin of a hut named {string}', function (string) {
+Then('I should admin of a hut named {string}', async function (string) {
     // Write code here that turns the phrase above into concrete actions
     return 'pending';
 });
