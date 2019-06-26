@@ -110,18 +110,6 @@ async function createHut(db, hutData) {
 async function createForm(db, formConfigs, hutId) {
     let id = uuid.v4();
     let now = (new Date()).toISOString();
-    let {
-            showOrgType,
-            showBankDetails,
-            showEan,
-            showCleaningToggle,
-            defaultCleaningInclude,
-            showArrivalTime,
-            showDepartureTime,
-            stdArrivalTime,
-            stdDepartureTime,
-            stdInformation
-        } = formConfigs;
 
     try {
         await db.query(
@@ -141,16 +129,7 @@ async function createForm(db, formConfigs, hutId) {
                 {
                     createdAt: now,
                     updatedAt: now,
-                    showOrgType,
-                    showBankDetails,
-                    showEan,
-                    showCleaningToggle,
-                    defaultCleaningInclude,
-                    showArrivalTime,
-                    showDepartureTime,
-                    stdArrivalTime,
-                    stdDepartureTime,
-                    stdInformation
+                    ...formConfigs
                 }
             ]
         );
