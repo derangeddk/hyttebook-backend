@@ -16,4 +16,8 @@ async function findForm(db, hutId) {
     } catch(error) {
         throw new Error(`queried for a form with an id of ${hutId}`);
     }
+
+    let form = result;
+
+    return form;
 }
