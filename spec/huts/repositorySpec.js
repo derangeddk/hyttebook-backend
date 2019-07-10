@@ -3,10 +3,11 @@ const HutsRepository = rewire("../../src/huts/repository");
 
 describe("huts repository" , function() {
     describe("constructor function", function() {
-        it("creates a repository if the huts table already exists",async function() {
+        it("creates a repository if the huts and role_connections table already exists",async function() {
             let db = {
                 query: async (query) => {
                     if(query == "SELECT 'public.huts'::regclass") return;
+                    if(query == "SELECT 'public.role_connections'::regclass") return;
                 }
             };
 
@@ -36,9 +37,9 @@ describe("huts repository" , function() {
                 })
             };
 
-            let actualError = null;
             let hutsRepository = new HutsRepository(db);
 
+            let actualError = null;
             try {
                 await hutsRepository.initialize();
             } catch(error) {
@@ -46,7 +47,7 @@ describe("huts repository" , function() {
             }
 
             expect(db.query).toHaveBeenCalledWith("SELECT 'public.huts'::regclass");
-            expect(actualError).toEqual(jasmine.any(Error));
+            expect(actualError).not.toBe(null);
         });
 
         it("explodes if the database explodes while creating the huts table, if the table does not already exist", async function() {
@@ -115,13 +116,14 @@ describe("huts repository" , function() {
                 email: "test@test.test",
                 phone: "74654010"
             }
+            let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
 
             let actualError = null;
             let hutsRepository = new HutsRepository(db);
             let id;
 
             try {
-                id = await hutsRepository.create(hutData);
+                id = await hutsRepository.create(hutData, userId);
             } catch(error) {
                 actualError = error;
             }
@@ -171,9 +173,10 @@ describe("huts repository" , function() {
                 email: "test@test.test",
                 phone: "74654010"
             }
+            let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
 
             try {
-                id = await hutsRepository.create(hutData);
+                id = await hutsRepository.create(hutData, userId);
             } catch(error) {
                 actualError = error;
             }
@@ -220,11 +223,13 @@ describe("huts repository" , function() {
                 email: "test@test.test",
                 phone: "74654010"
             }
+            let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
+
             let actualError = null;
             let hutsRepository = new HutsRepository(db)
 
             try {
-                await hutsRepository.create(hutData);
+                await hutsRepository.create(hutData, userId);
             } catch(error) {
                 actualError = error;
             }
@@ -294,14 +299,15 @@ describe("huts repository" , function() {
                 zipCode: "2400",
                 email: "test@test.test",
                 phone: "74654010"
-            }
-            let actualError = null;
+            };
+            let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
 
             let hutsRepository = new HutsRepository(db)
             let hutId;
 
+            let actualError = null;
             try {
-                hutId = await hutsRepository.create(hutData);
+                hutId = await hutsRepository.create(hutData, userId);
             } catch(error) {
                 actualError = error;
             }
@@ -357,7 +363,56 @@ describe("huts repository" , function() {
                     stdDepartureTime: false,
                     stdInformation: ""
                 }
-            ])
+            ]);
+        });
+
+        it("fails if postgres explodes upon inserting a roleconnection after creating a hut and a form", async function() {
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async (query) => {
+                    if(query.startsWith("INSERT INTO role_connections")) {
+                        throw new Error("postgres exploded while trying to insert a roleconnection");
+                    }
+                })
+            };
+
+            let hutsRepository = new HutsRepository(db);
+
+            let hutData = {
+                hutName: "test hut",
+                street: "test street",
+                streetNumber: "1",
+                city: "test city",
+                zipCode: "2400",
+                email: "test@test.test",
+                phone: "74654010"
+            };
+            let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
+
+            let actualError = null;
+            try {
+                await hutsRepository.create(hutData, userId);
+            } catch(error) {
+                actualError = error;
+            }
+
+            // expect(db.query).toHaveBeenCalledWith(
+            //     `INSERT INTO role_connections(
+            //         user_id,
+            //         hut_id,
+            //         role
+            //     ),
+            //     VALUES(
+            //         $1::uuid,
+            //         $2::uuid,
+            //         $3::integer
+            //     )`,
+            //     [
+            //         userId,
+            //         hutId = jasmine.any(String),
+            //         role = 1
+            //     ]
+            // );
+            expect(actualError).not.toBe(null);
         });
 
         it("implicitly creates an administrator role connection between the hut and the creating user after creating a hut and a form", async function() {

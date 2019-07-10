@@ -12,8 +12,17 @@ setWorldConstructor(World);
 
 Before(async function(testcase) {
     this.client = axios.create({
-        baseURL: `http://localhost:${config.port}`
+        baseURL: `http://localhost:${config.port}`,
     });
+
+    this.setUserId = (userId) => {
+        this.client = axios.create({
+            baseURL: `http://localhost:${config.port}`,
+            headers:{
+                "user-id": this.userId
+            }
+        });
+    };
 
     await app.start();
 });

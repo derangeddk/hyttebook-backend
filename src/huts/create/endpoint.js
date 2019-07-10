@@ -9,6 +9,8 @@ module.exports = (hutsRepository) => async (req, res) => {
         phone
     } = req.body;
 
+    let { userId } = req.auth;
+
     let requestErrors = {
         errorCount: 0,
     };
@@ -28,7 +30,7 @@ module.exports = (hutsRepository) => async (req, res) => {
 
     let result;
     try {
-        result = await hutsRepository.create(req.body);
+        result = await hutsRepository.create(req.body, userId);
     } catch(error) {
         console.error("tried to create the hut but couldn't: ", error);
         res.status(500).send({ error: "tried to create hut but couldn't"});

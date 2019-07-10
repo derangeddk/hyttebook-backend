@@ -10,4 +10,6 @@ Given('I am authenticated as a user', async function () {
     let usersReponse = await this.client.post("/users", { username, email, password, fullName });
 
     this.userId = usersReponse.data.id;
+
+    this.setUserId(this.userId);
 });

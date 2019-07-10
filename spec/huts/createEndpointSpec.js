@@ -20,6 +20,9 @@ describe("create endpoint" , function() {
                 zipCode: "0001",
                 email: "test@test.com",
                 phone: "12345678"
+            },
+            auth: {
+                userId: "87bf5232-d8ee-475f-bf46-22dc5aac7531"
             }
         };
 
@@ -84,6 +87,9 @@ describe("create endpoint" , function() {
                 zipCode: "0001",
                 email: "test@test.com",
                 phone: "12345678"
+            },
+            auth: {
+                userId: "87bf5232-d8ee-475f-bf46-22dc5aac7531"
             }
         };
 
@@ -148,6 +154,9 @@ describe("create endpoint" , function() {
                 zipCode: "0001",
                 email: "test@test.com",
                 phone: "12345678"
+            },
+            auth: {
+                userId: "87bf5232-d8ee-475f-bf46-22dc5aac7531"
             }
         };
 
@@ -204,6 +213,9 @@ describe("create endpoint" , function() {
                 zipCode: "0001",
                 email: "test@test.com",
                 phone: "12345678"
+            },
+            auth: {
+                userId: "87bf5232-d8ee-475f-bf46-22dc5aac7531"
             }
         };
 
@@ -242,6 +254,9 @@ describe("create endpoint" , function() {
                 zipCode: "0001",
                 email: "test@test.com",
                 phone: "12345678"
+            },
+            auth: {
+                userId: "87bf5232-d8ee-475f-bf46-22dc5aac7531"
             }
         };
 
