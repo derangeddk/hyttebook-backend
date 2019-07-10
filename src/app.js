@@ -12,6 +12,7 @@ const { Pool } = require('pg')
 const UsersRepository = require("./users/repository");
 const FormsRepository = require('./forms/repository');
 const HutsRepository = require('./huts/repository');
+const auth = require("./middleware/auth");
 
 module.exports = (config) => {
     let app = express();
@@ -20,7 +21,7 @@ module.exports = (config) => {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         next();
-      });
+    });
 
     app.get("/includes/:id/booking.js", (req, res) => {
         res.set("Content-Type", "application/javascript");
@@ -33,6 +34,9 @@ module.exports = (config) => {
     let hutsRepository = new HutsRepository(db);
     app.post("/login", loginEndpoint(usersRepository));
     app.use("/users", usersApp(usersRepository));
+    //From now users should be authenticated
+    app.use(auth);
+
     app.use("/forms", formsApp(formsRepository));
     app.use("/huts", hutsApp(hutsRepository));
 
