@@ -11,5 +11,5 @@ Feature: Register hut
         | id                | hutName | street      | streetNumber | city     | zipCode | email        | phone    |
         | "the return uuid" | xyz hut | Kildemarken | 96           | Havdrup  | 4622    | xyz@mail.com | 74654010 |
         And the hut should have a form
-        And I should admin of a hut named "xyz hut"
+        And I should be admin of a hut named "xyz hut"
 
