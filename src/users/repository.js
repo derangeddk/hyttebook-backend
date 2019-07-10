@@ -3,7 +3,7 @@ const crypto = require('crypto');
 
 module.exports = function constructor(db) {
     return {
-        initialize: async () => ensureUsersTableExists(db),
+        initialize: async () => await ensureUsersTableExists(db),
         create: (username, password, email, fullName) => createUser(db, username, password, email, fullName),
         authenticate: (username, password) =>  authenticate(db, username, password),
     };
