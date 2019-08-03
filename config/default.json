@@ -1,9 +1,10 @@
 {
-    "port": 4752,
+    "port": 4000,
     "postgres": {
         "user": "postgres",
-        "host": "localhost",
+        "host": "db",
         "database": "hytte_index",
-        "password": "postgres"
+        "password": "postgres",
+        "port": 5432
     }
 }

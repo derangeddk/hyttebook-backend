@@ -44,7 +44,17 @@ module.exports = (config) => {
     return {
         start: async () => {
             //assert db start readiness
-            await db.query("SELECT now();")
+            let retries = 5;
+            while(retries) {
+                try {
+                    await db.query("SELECT now();")
+                    break;
+                } catch(error) {
+                    console.log("error connecting to database on application initilization: ", error);
+                    retries--;
+                    await new Promise(res => setTimeout(res, 5000));
+                }
+            }
             await usersRepository.initialize();
             await formsRepository.initialize();
             await hutsRepository.initialize();
