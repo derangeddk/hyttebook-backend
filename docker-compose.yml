@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
   web:
-    image: dein/hyttebook-backend:030819
+    image: dein/hyttebook-backend
     depends_on:
       - db
     ports:
