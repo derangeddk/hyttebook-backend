@@ -26,7 +26,7 @@ async function ensureUsersTableExists(db) {
             )`
         );
 
-        await createUser(db, "admin","admin");
+        await createUser(db, "admin","admin", "philip@deranged.dk", "admin");
 
     } catch(error) {
         console.error("Something went wrong upon creating the users table", error);

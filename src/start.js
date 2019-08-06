@@ -4,5 +4,3 @@ const smacker = require('smacker');
 
 let app = createApp(config);
 smacker.start({ service: app });
-
-

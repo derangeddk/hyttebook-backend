@@ -10,7 +10,7 @@
     "start": "node src/start",
     "example": "npx http-server -- test",
     "test": "jasmine",
-    "dev": "nodemon --delay 5 src/start",
+    "dev": "nodemon --delay 4 src/start",
     "con-test": "nodemon --exec jasmine || true",
     "test-cuke": "cucumber-js"
   },

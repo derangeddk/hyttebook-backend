@@ -14,3 +14,10 @@ services:
       - db
     ports:
       - "4752:4752"
+    volumes:
+      - .:/usr/src/app
+    working_dir:
+      /usr/src/app
+    command:
+      npm run dev
+
