@@ -45,8 +45,7 @@ module.exports = (usersRepository) => async (req, res) => {
 
     let token = jwt.sign(result.id);
 
-    res.cookie("access_token", "some-value", { domain: "127.0.0.1" });
-    // res.setHeader("Set-Cookie",`key=${token};`);
+    res.cookie("access_token", token);
     res.setHeader("Content-Type", "application/json");
     res.send(result);
 };
