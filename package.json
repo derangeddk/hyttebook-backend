@@ -11,7 +11,7 @@
     "example": "npx http-server -- test",
     "test": "jasmine",
     "dev": "nodemon --delay 4 src/start",
-    "con-test": "nodemon --exec jasmine || true",
+    "con-test": "nodemon -L --exec jasmine || true",
     "test-cuke": "cucumber-js"
   },
   "repository": {
