@@ -13,6 +13,7 @@ const UsersRepository = require("./users/repository");
 const FormsRepository = require('./forms/repository');
 const HutsRepository = require('./huts/repository');
 const auth = require("./middleware/auth");
+const priceApp = require('./prices/app');
 
 module.exports = (config) => {
     let app = express();
@@ -39,6 +40,7 @@ module.exports = (config) => {
 
     app.use("/forms", formsApp(formsRepository));
     app.use("/huts", hutsApp(hutsRepository));
+    app.use("/pricetest", priceApp( /* PricesRepository */ ));
 
     let server;
     return {
