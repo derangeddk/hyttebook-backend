@@ -21,7 +21,7 @@ module.exports = (config) => {
     app.use(bodyParser.json());
     app.use(cookieParser());
 
-    let whiteList = ["http://localhost:4752", "http://localhost:3000"];
+    let whiteList = ["http://localhost:4752", "http://localhost:3000", " http://dawa.aws.dk/postnumre/"];
     let corsOptions = {
         origin: function(origin, callback) {
             if(whiteList.indexOf(origin) !== -1) {
