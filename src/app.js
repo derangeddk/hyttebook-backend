@@ -20,7 +20,7 @@ const priceApp = require('./prices/app');
 module.exports = (config) => {
     let app = express();
     app.use(bodyParser.json());
-    
+
     app.use(cookieParser());
 
     let whiteList = ["http://localhost:4752", "http://localhost:3000", " http://dawa.aws.dk/postnumre/"];
@@ -53,7 +53,7 @@ module.exports = (config) => {
 
     app.use("/forms", formsApp(formsRepository));
     app.use("/huts", hutsApp(hutsRepository));
-    app.use("/pricetest", priceApp( /* PricesRepository */ ));
+    app.use("/pricetest", priceApp( /* PricesRepository */ )); // TODO
 
     let server;
     return {
