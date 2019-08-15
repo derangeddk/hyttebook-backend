@@ -20,13 +20,7 @@ const priceApp = require('./prices/app');
 module.exports = (config) => {
     let app = express();
     app.use(bodyParser.json());
-<<<<<<< HEAD
-    app.use(function(req, res, next) {
-        res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-        next();
-    });
-=======
+    
     app.use(cookieParser());
 
     let whiteList = ["http://localhost:4752", "http://localhost:3000", " http://dawa.aws.dk/postnumre/"];
@@ -42,7 +36,6 @@ module.exports = (config) => {
         allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept"
     };
     app.use(cors(corsOptions));
->>>>>>> master
 
     app.get("/includes/:id/booking.js", (req, res) => {
         res.set("Content-Type", "application/javascript");
