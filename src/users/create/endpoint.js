@@ -45,7 +45,7 @@ module.exports = (usersRepository) => async (req, res) => {
 
     let token = jwt.sign(result.id);
 
-    res.cookie("access_token", token);
+    res.cookie("access_token", token, {httpOnly: true });
     res.setHeader("Content-Type", "application/json");
     res.send(result);
 };
