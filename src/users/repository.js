@@ -1,5 +1,5 @@
 const uuid = require('uuid');
-const crypto = require('crypto');
+const passwordEncryption = require("./passwordEncryption");
 
 module.exports = function constructor(db) {
     return {
@@ -50,8 +50,8 @@ async function tableExists(db) {
 async function createUser(db, username, password, email, fullName) {
     let id = uuid.v4();
     let now = (new Date()).toISOString();
-    let salt = getSalt(16);
-    let passwordHash = hashPassword(password, salt);
+    let salt = passwordEncryption.getSalt(24);
+    let passwordHash = passwordEncryption.hashPassword(password, salt);
 
     try {
         await db.query(
@@ -137,27 +137,11 @@ async function authenticate(db, email, password) {
     }
 
 
-    if(!hashedPasswordAndTypedPasswordMatch(result.rows[0].salt, result.rows[0].passwordhash, password)){
+    if(!passwordEncryption.hashedPasswordAndTypedPasswordMatch(result.rows[0].salt, result.rows[0].passwordhash, password)){
         let error = new Error("The password was incorrect")
         error.code = "INCORRECT";
         throw error;
     }
 
     return { token: 1, user: result.rows[0].data };
-}
-
-function getSalt(saltLength) {
-    return crypto.randomBytes(Math.ceil(saltLength/2)).toString('hex').slice(0,saltLength);
-};
-
-function hashPassword(password, salt) {
-    let hash = crypto.createHmac('sha512', salt);
-    hash.update(password);
-    return hash.digest('hex');
-}
-
-function hashedPasswordAndTypedPasswordMatch(salt, passwordHash, clearTextPassword) {
-    let hashedClearTextPassword = hashPassword(clearTextPassword, salt);
-
-    return hashedClearTextPassword === passwordHash ? true : false;
 }
