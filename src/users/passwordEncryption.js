@@ -6,7 +6,7 @@ function getSalt(saltLength) {
 
 function hashPassword(password, salt) {
     let startTime = new Date();
-    let iterations = 500000;
+    let iterations = 100000;
     let hash = crypto.pbkdf2Sync(password, salt, iterations, 512, 'sha512');
     // hash.update(password);
     let timeToHashComplete = new Date() - startTime;
