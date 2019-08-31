@@ -20,6 +20,8 @@ module.exports = (users) => async (req, res) => {
         }
     }
 
+    delete user.id
+
     let { token, user } = result;
 
     res.send({token, user});
