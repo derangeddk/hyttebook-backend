@@ -3,80 +3,90 @@ const HutsRepository = rewire("../../src/huts/repository");
 
 describe("huts repository" , function() {
     describe("constructor function", function() {
-        it("creates a repository if the huts and role_connections table already exists",async function() {
-            let db = {
-                query: async (query) => {
-                    if(query == "SELECT 'public.huts'::regclass") return;
-                    if(query == "SELECT 'public.role_connections'::regclass") return;
+        it("creates a repository if the huts and role_connections table already exists",
+            async function() {
+                let db = {
+                    query: async (query) => {
+                        if(query == "SELECT 'public.huts'::regclass") return;
+                        if(query == "SELECT 'public.role_connections'::regclass") return;
+                    }
+                };
+
+                let actualError = null;
+                let hutsRepository = new HutsRepository(db);
+
+                try {
+                    await hutsRepository.initialize();
+                } catch(error) {
+                    actualError = error;
                 }
-            };
 
-            let actualError = null;
-            let hutsRepository = new HutsRepository(db);
-
-            try {
-                await hutsRepository.initialize();
-            } catch(error) {
-                actualError = error;
+                expect(actualError).toBe(null);
+                expect(hutsRepository).toEqual({
+                    initialize: jasmine.any(Function),
+                    create: jasmine.any(Function),
+                    find: jasmine.any(Function),
+                });
             }
+        );
 
-            expect(actualError).toBe(null);
-            expect(hutsRepository).toEqual({
-                initialize: jasmine.any(Function),
-                create: jasmine.any(Function),
-                find: jasmine.any(Function),
-            });
-        });
+        it("explodes if the database throws an error while checking if the huts table exists",
+            async function() {
+                let db = {
+                    query: jasmine.createSpy("db.query").and.callFake(async (query) => {
+                        if(query.startsWith("SELECT 'public.huts'::regclass")) {
+                            throw new Error("exploded while checking if huts table exists");
+                        }
+                    })
+                };
 
-        it("explodes if the database throws an error while checking if the huts table exists", async function() {
-            let db = {
-                query: jasmine.createSpy("db.query").and.callFake(async (query) => {
-                    if(query.startsWith("SELECT 'public.huts'::regclass")) {
-                        throw new Error("exploded while checking if huts table exists");
-                    }
-                })
-            };
+                let hutsRepository = new HutsRepository(db);
 
-            let hutsRepository = new HutsRepository(db);
+                let actualError = null;
+                try {
+                    await hutsRepository.initialize();
+                } catch(error) {
+                    actualError = error;
+                }
 
-            let actualError = null;
-            try {
-                await hutsRepository.initialize();
-            } catch(error) {
-                actualError = error;
+                expect(db.query).toHaveBeenCalledWith("SELECT 'public.huts'::regclass");
+                expect(actualError).not.toBe(null);
             }
+        );
 
-            expect(db.query).toHaveBeenCalledWith("SELECT 'public.huts'::regclass");
-            expect(actualError).not.toBe(null);
-        });
+        it(`explodes if the database explodes while creating the huts table,
+            if the table does not already exist`,
+            async function() {
+                let db = {
+                    query: jasmine.createSpy("db.query").and.callFake(async (query) => {
+                        if(query.startsWith("SELECT 'public.huts'::regclass")) {
+                            throw new Error('relation "public.huts" does not exist');
+                        }
+                        if(query.startsWith(
+                            "CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)"))
+                        {
+                            throw new Error('postgres exploded while creating the huts table');
+                        } else {
+                            throw new Error("Unexpected db call");
+                        }
+                    })
+                }
 
-        it("explodes if the database explodes while creating the huts table, if the table does not already exist", async function() {
-            let db = {
-                query: jasmine.createSpy("db.query").and.callFake(async (query) => {
-                    if(query.startsWith("SELECT 'public.huts'::regclass")) {
-                        throw new Error('relation "public.huts" does not exist');
-                    }
-                    if(query.startsWith("CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)")) {
-                        throw new Error('postgres exploded while creating the huts table');
-                    } else {
-                        throw new Error("Unexpected db call");
-                    }
-                })
+                let actualError = null;
+                let hutsRepository = new HutsRepository(db);
+
+                try {
+                    await hutsRepository.initialize();
+                } catch(error) {
+                    actualError = error;
+                }
+
+                expect(actualError).toEqual(jasmine.any(Error));
+                expect(db.query.calls.allArgs(["SELECT 'public.huts'::regclass"],
+                    ['CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']));
+                expect(db.query.calls.count(2));
             }
-
-            let actualError = null;
-            let hutsRepository = new HutsRepository(db);
-
-            try {
-                await hutsRepository.initialize();
-            } catch(error) {
-                actualError = error;
-            }
-
-            expect(actualError).toEqual(jasmine.any(Error));
-            expect(db.query.calls.allArgs(["SELECT 'public.huts'::regclass"],['CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']));
-            expect(db.query.calls.count(2));
-        });
+        );
 
         it("creates the huts table if the table does not already exist",async function() {
             let db = {
@@ -98,7 +108,9 @@ describe("huts repository" , function() {
 
             expect(actualError).toBe(null);
             expect(db.query.calls.count(2));
-            expect(db.query).toHaveBeenCalledWith('CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)');
+            expect(db.query)
+                .toHaveBeenCalledWith(`CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY,
+                    data json NOT NULL)`);
         });
     });
 
@@ -206,48 +218,16 @@ describe("huts repository" , function() {
             ]);
         });
 
-        it("fails if postgress explodes upon inserting a form after having created a hut", async function() {
-            let db = {
-                query: jasmine.createSpy("db.query").and.callFake(async (query) => {
-                    if(query.startsWith("INSERT INTO forms")) {
-                        throw new Error("postgres exploded while trying to insert a form");
-                    }
-                })
-            };
-            let hutData = {
-                hutName: "test hut",
-                street: "test street",
-                streetNumber: "1",
-                city: "test city",
-                zipCode: "2400",
-                email: "test@test.test",
-                phone: "74654010"
-            }
-            let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
-
-            let actualError = null;
-            let hutsRepository = new HutsRepository(db)
-
-            try {
-                await hutsRepository.create(hutData, userId);
-            } catch(error) {
-                actualError = error;
-            }
-
-            expect(actualError).not.toBe(null);
-            expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
-                id,
-                data
-            )
-            VALUES(
-                $1::uuid,
-                $2::json
-            )`,
-            [
-                jasmine.any(String),
-                {
-                    createdAt: jasmine.any(String),
-                    updatedAt: jasmine.any(String),
+        it("fails if postgress explodes upon inserting a form after having created a hut",
+            async function() {
+                let db = {
+                    query: jasmine.createSpy("db.query").and.callFake(async (query) => {
+                        if(query.startsWith("INSERT INTO forms")) {
+                            throw new Error("postgres exploded while trying to insert a form");
+                        }
+                    })
+                };
+                let hutData = {
                     hutName: "test hut",
                     street: "test street",
                     streetNumber: "1",
@@ -256,36 +236,70 @@ describe("huts repository" , function() {
                     email: "test@test.test",
                     phone: "74654010"
                 }
-            ]);
-            expect(db.query).toHaveBeenCalledWith(`INSERT INTO forms(
-                id,
-                hutId,
-                data
-            )
-            VALUES(
-                $1::uuid,
-                $2::uuid,
-                $3::json
-            )`,
-            [
-                id = jasmine.any(String),
-                hutId = jasmine.any(String),
-                {
-                    createdAt: jasmine.any(String),
-                    updatedAt: jasmine.any(String),
-                    showOrgType: false,
-                    showBankDetails: false,
-                    showEan: false,
-                    showCleaningToggle: false,
-                    defaultCleaningInclude: false,
-                    showArrivalTime: false,
-                    showDepartureTime: false,
-                    stdArrivalTime: false,
-                    stdDepartureTime: false,
-                    stdInformation: ""
+                let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
+
+                let actualError = null;
+                let hutsRepository = new HutsRepository(db)
+
+                try {
+                    await hutsRepository.create(hutData, userId);
+                } catch(error) {
+                    actualError = error;
                 }
-            ])
-        });
+
+                expect(actualError).not.toBe(null);
+                expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
+                    id,
+                    data
+                )
+                VALUES(
+                    $1::uuid,
+                    $2::json
+                )`,
+                [
+                    jasmine.any(String),
+                    {
+                        createdAt: jasmine.any(String),
+                        updatedAt: jasmine.any(String),
+                        hutName: "test hut",
+                        street: "test street",
+                        streetNumber: "1",
+                        city: "test city",
+                        zipCode: "2400",
+                        email: "test@test.test",
+                        phone: "74654010"
+                    }
+                ]);
+                expect(db.query).toHaveBeenCalledWith(`INSERT INTO forms(
+                    id,
+                    hutId,
+                    data
+                )
+                VALUES(
+                    $1::uuid,
+                    $2::uuid,
+                    $3::json
+                )`,
+                [
+                    id = jasmine.any(String),
+                    hutId = jasmine.any(String),
+                    {
+                        createdAt: jasmine.any(String),
+                        updatedAt: jasmine.any(String),
+                        showOrgType: false,
+                        showBankDetails: false,
+                        showEan: false,
+                        showCleaningToggle: false,
+                        defaultCleaningInclude: false,
+                        showArrivalTime: false,
+                        showDepartureTime: false,
+                        stdArrivalTime: false,
+                        stdDepartureTime: false,
+                        stdInformation: ""
+                    }
+                ])
+            }
+        );
 
         it("implicitly creates a form after creating a hut", async function() {
             let db = {
@@ -366,58 +380,67 @@ describe("huts repository" , function() {
             ]);
         });
 
-        it("fails if postgres explodes upon inserting a roleconnection after creating a hut and a form", async function() {
-            let db = {
-                query: jasmine.createSpy("db.query").and.callFake(async (query) => {
-                    if(query.startsWith("INSERT INTO role_connections")) {
-                        throw new Error("postgres exploded while trying to insert a roleconnection");
-                    }
-                })
-            };
+        it(`fails if postgres explodes upon inserting a roleconnection
+            after creating a hut and a form`,
+            async function() {
+                let db = {
+                    query: jasmine.createSpy("db.query").and.callFake(async (query) => {
+                        if(query.startsWith("INSERT INTO role_connections")) {
+                            throw new Error(
+                                "postgres exploded while trying to insert a roleconnection"
+                            );
+                        }
+                    })
+                };
 
-            let hutsRepository = new HutsRepository(db);
+                let hutsRepository = new HutsRepository(db);
 
-            let hutData = {
-                hutName: "test hut",
-                street: "test street",
-                streetNumber: "1",
-                city: "test city",
-                zipCode: "2400",
-                email: "test@test.test",
-                phone: "74654010"
-            };
-            let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
+                let hutData = {
+                    hutName: "test hut",
+                    street: "test street",
+                    streetNumber: "1",
+                    city: "test city",
+                    zipCode: "2400",
+                    email: "test@test.test",
+                    phone: "74654010"
+                };
+                let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
 
-            let actualError = null;
-            try {
-                await hutsRepository.create(hutData, userId);
-            } catch(error) {
-                actualError = error;
+                let actualError = null;
+                try {
+                    await hutsRepository.create(hutData, userId);
+                } catch(error) {
+                    actualError = error;
+                }
+
+                //TO DO: see if test passes now
+                // expect(db.query).toHaveBeenCalledWith(
+                //     `INSERT INTO role_connections(
+                //         user_id,
+                //         hut_id,
+                //         role
+                //     ),
+                //     VALUES(
+                //         $1::uuid,
+                //         $2::uuid,
+                //         $3::integer
+                //     )`,
+                //     [
+                //         userId,
+                //         hutId = jasmine.any(String),
+                //         role = 1
+                //     ]
+                // );
+                expect(actualError).not.toBe(null);
             }
+        );
 
-            // expect(db.query).toHaveBeenCalledWith(
-            //     `INSERT INTO role_connections(
-            //         user_id,
-            //         hut_id,
-            //         role
-            //     ),
-            //     VALUES(
-            //         $1::uuid,
-            //         $2::uuid,
-            //         $3::integer
-            //     )`,
-            //     [
-            //         userId,
-            //         hutId = jasmine.any(String),
-            //         role = 1
-            //     ]
-            // );
-            expect(actualError).not.toBe(null);
-        });
-
-        it("implicitly creates an administrator role connection between the hut and the creating user after creating a hut and a form", async function() {
-
-        });
+        it(`implicitly creates an administrator role connection between
+            the hut and the creating user after creating a hut and a form`,
+            async function() {
+                //TO DO: implement test
+            }
+        );
     });
 
     describe("findHut function", function() {

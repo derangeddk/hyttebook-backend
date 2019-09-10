@@ -7,7 +7,15 @@ Given('I am authenticated as a user', async function () {
     let password = uuid.v4();
     let fullName = "FullName" + uuid.v4();
 
-    let usersReponse = await this.client.post("/users", { username, email, password, fullName });
+    let usersReponse = await this.client.post(
+        "/users",
+        {
+            username,
+            email,
+            password,
+            fullName
+        }
+    );
 
     this.userId = usersReponse.data.id;
 

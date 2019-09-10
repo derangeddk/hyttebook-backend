@@ -34,7 +34,9 @@ async function ensureHutsTableExists(db) {
         return;
     }
     try {
-        await db.query("CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)");
+        await db.query(
+            "CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)"
+        );
     } catch(error) {
         throw new Error("failed while trying to create 'huts' table", error);
     }
@@ -49,7 +51,10 @@ async function roleConnectionsTableExists(db) {
         if(error.message === 'relation "public.role_connections" does not exist') {
             return false;
         }
-        throw new Error("Tried to assertain the existence of a 'role_connections' table", error);
+        throw new Error(
+            "Tried to assertain the existence of a 'role_connections' table",
+            error
+        );
     }
     return true;
 };
@@ -148,7 +153,10 @@ async function createHut(db, hutData, userId) {
     try{
         await createRoleConnection(db, roleConnection);
     } catch(error) {
-        throw new Error("failed to implicitly create roleConnection after creating a hut and a form", error);
+        throw new Error(
+            "failed to implicitly create roleConnection after creating a hut and a form",
+            error
+        );
     }
 
     return id;

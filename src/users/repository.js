@@ -4,7 +4,8 @@ const passwordEncryption = require("./passwordEncryption");
 module.exports = function constructor(db) {
     return {
         initialize: async () => await ensureUsersTableExists(db),
-        create: (username, password, email, fullName) => createUser(db, username, password, email, fullName),
+        create: (username, password, email, fullName)
+            => createUser(db, username, password, email, fullName),
         authenticate: (username, password) =>  authenticate(db, username, password),
     };
 };
@@ -40,7 +41,10 @@ async function tableExists(db) {
             `SELECT 'public.users'::regclass`
         );
     } catch(error) {
-        console.error('No users table was found. An attempt at creating one will now proceed. This was the error: ', error);
+        console.error(`No users table was found. An attempt at creating
+            one will now proceed. This was the error: `,
+            error
+        );
         return false;
     }
 
@@ -137,7 +141,12 @@ async function authenticate(db, email, password) {
     }
 
 
-    if(!passwordEncryption.hashedPasswordAndTypedPasswordMatch(result.rows[0].salt, result.rows[0].passwordhash, password)){
+    if(!passwordEncryption.hashedPasswordAndTypedPasswordMatch(
+                result.rows[0].salt,
+                result.rows[0].passwordhash,
+                password
+            )
+        ) {
         let error = new Error("The password was incorrect")
         error.code = "INCORRECT";
         throw error;

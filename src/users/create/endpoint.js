@@ -39,7 +39,9 @@ module.exports = (usersRepository) => async (req, res) => {
             return;
         }
         console.error("...", error);
-        res.status(500).json({message: "An error occured that you can't help. Please refresh and start over"});
+        res.status(500).json(
+            {message: "An error occured that you can't help. Please refresh and start over"}
+        );
         return;
     }
 

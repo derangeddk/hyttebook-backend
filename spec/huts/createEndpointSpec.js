@@ -39,7 +39,8 @@ describe("create endpoint" , function() {
         let newHut = { id: "test" };
 
         let hutsRepository = {
-            create: jasmine.createSpy("hutsRepository.create").and.callFake(async () => newHut)
+            create: jasmine.createSpy("hutsRepository.create")
+            .and.callFake(async () => newHut)
         }
 
         let endpoint = createEndpoint(hutsRepository);
@@ -106,7 +107,8 @@ describe("create endpoint" , function() {
         let newHut = { id: "test" };
 
         let hutsRepository = {
-            create: jasmine.createSpy("hutsRepository.create").and.callFake(async () => newHut)
+            create: jasmine.createSpy("hutsRepository.create")
+            .and.callFake(async () => newHut)
         }
 
         let endpoint = createEndpoint(hutsRepository);
@@ -173,7 +175,8 @@ describe("create endpoint" , function() {
         let newHut = { id: "test" };
 
         let hutsRepository = {
-            create: jasmine.createSpy("hutsRepository.create").and.callFake(async () => newHut)
+            create: jasmine.createSpy("hutsRepository.create")
+            .and.callFake(async () => newHut)
         };
 
         let endpoint = createEndpoint(hutsRepository);
@@ -227,7 +230,8 @@ describe("create endpoint" , function() {
         let newHut = { id: "test" };
 
         let hutsRepository = {
-            create: jasmine.createSpy("hutsRepository.create").and.callFake(async () => newHut)
+            create: jasmine.createSpy("hutsRepository.create")
+            .and.callFake(async () => newHut)
         };
 
         let endpoint = createEndpoint(hutsRepository);

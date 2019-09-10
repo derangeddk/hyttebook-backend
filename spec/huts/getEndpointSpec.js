@@ -35,7 +35,8 @@ describe("get endpoint", function() {
 
         expect(actualError).toEqual(null);
         expect(res.send).toHaveBeenCalledTimes(1);
-        expect(res.send).toHaveBeenCalledWith({error: "tried to find a hut with an id, but couldn't"});
+        expect(res.send)
+            .toHaveBeenCalledWith({error: "tried to find a hut with an id, but couldn't"});
         expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.status).toHaveBeenCalledWith(500)
     });
