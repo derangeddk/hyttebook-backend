@@ -18,7 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/derangeddk/hyttebook-backend.git"
   },
-  "author": "Niels Abildgaard <niels@deranged.dk>",
+  "author": "Philip Dein <philip@deranged.dk>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/derangeddk/hyttebook-backend/issues"
