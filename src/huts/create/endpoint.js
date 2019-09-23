@@ -9,7 +9,7 @@ module.exports = (hutsRepository) => async (req, res) => {
         phone
     } = req.body;
 
-    let { userId } = req.auth;
+    let userId = req.auth.user_id;
 
     let requestErrors = {
         errorCount: 0,
