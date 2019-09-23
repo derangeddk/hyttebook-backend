@@ -9,7 +9,12 @@ Given('I am authenticated as a user', async function () {
 
     let usersReponse = await this.client.post("/users", { username, email, password, fullName });
 
-    this.userId = usersReponse.data.id;
 
-    this.setUserId(this.userId);
+    let jwt = retrieveToken(usersReponse.headers['set-cookie'][0])
+    this.setUser(jwt);
 });
+
+function retrieveToken(cookieWithToken) {
+    let tokenArray = cookieWithToken.match(/(?<=\=).*$/);
+    return tokenArray[0];
+}
