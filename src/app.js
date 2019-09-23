@@ -24,7 +24,7 @@ module.exports = (config) => {
     let whiteList = ["http://localhost:4752", "http://localhost:3000", " http://dawa.aws.dk/postnumre/"];
     let corsOptions = {
         origin: function(origin, callback) {
-            if(whiteList.indexOf(origin) !== -1) {
+            if(whiteList.indexOf(origin) !== -1 || !origin) {
                 callback(null, true);
             } else {
                 callback(new Error("not allowedby CORS"));
@@ -34,6 +34,7 @@ module.exports = (config) => {
         allowedHeaders: "Origin, X-Requested-With, Content-Type, Accept"
     };
     app.use(cors(corsOptions));
+
 
     app.get("/includes/:id/booking.js", (req, res) => {
         res.set("Content-Type", "application/javascript");
@@ -46,7 +47,7 @@ module.exports = (config) => {
     let hutsRepository = new HutsRepository(db);
     app.post("/login", loginEndpoint(usersRepository));
     app.use("/users", usersApp(usersRepository));
-    //From now users should be authenticated
+    //From now on users should be authenticated
     app.use(auth);
 
     app.use("/forms", formsApp(formsRepository));
