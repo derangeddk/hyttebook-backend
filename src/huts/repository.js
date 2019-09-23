@@ -19,8 +19,8 @@ async function ensureRoleConnectionsTableExists(db) {
     try {
         await db.query(
             `CREATE TABLE role_connections(
-                user_id uuid UNIQUE,
-                hut_id uuid UNIQUE,
+                user_id uuid NOT NULL,
+                hut_id uuid NOT NULL,
                 role integer NOT NULL
             )`
         );
