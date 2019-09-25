@@ -2,7 +2,6 @@ module.exports = (users) => async (req, res) => {
     let { email, password } = req.body;
 
     let result;
-
     try{
         result =  await users.authenticate(email, password);
     } catch(error) {
@@ -20,9 +19,8 @@ module.exports = (users) => async (req, res) => {
         }
     }
 
-    delete user.id
+    let user = {};
+    user.username = result.username;
 
-    let { token, user } = result;
-
-    res.send({token, user});
+    res.send({user});
 };

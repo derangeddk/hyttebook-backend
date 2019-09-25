@@ -143,5 +143,7 @@ async function authenticate(db, email, password) {
         throw error;
     }
 
-    return { token: 1, user: result.rows[0].data };
+
+
+    return { username: result.rows[0].data.username };
 }
