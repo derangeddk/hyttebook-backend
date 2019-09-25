@@ -14,7 +14,13 @@ module.exports = async (req, res, next) => {
 //This function's sole purpose is to aid in Cucumber tests where tokens are sent in cookies.
 //For some unknown reason cooki-parser is not able to do it's work when doing Cucumber tests.
 function removeCookieFlags(token) {
-    let tokenMatches = token.match(/(\;).*$/);
+    let tokenMatches;
+    try {
+        tokenMatches = token.match(/(\;).*$/);
+    } catch(error) {
+        console.error("removeCookieFlags trim function failed again: ", error);
+        return;
+    }
     if (!tokenMatches) return;
     let cleanedToken = token.slice(0,tokenMatches.index);
 
