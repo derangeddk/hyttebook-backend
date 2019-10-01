@@ -1,6 +1,6 @@
 const createEndpoint = require("../../src/users/create/endpoint");
 
-describe("create endpoint", function() {
+describe("users create endpoint", function() {
     it("creates a user with a username and a password", async function() {
         let newUser = { id: "Lol" };
 
