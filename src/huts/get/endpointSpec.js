@@ -1,4 +1,4 @@
-let getEndpoint = require("../../src/huts/get/endpoint");
+let getEndpoint = require("./endpoint");
 
 describe("get endpoint", function() {
     it("fails if huts repository explodes", async function() {

@@ -24,9 +24,9 @@ module.exports = (usersRepository) => async (req, res) => {
         return;
     }
 
-    let result;
+    let user;
     try {
-        result = await usersRepository.create(username, password, email, fullName);
+        user = await usersRepository.create(username, password, email, fullName);
     } catch(error) {
         if(error.code == "DUPLICATE") {
             res.setHeader("content-type", "application/json");
@@ -43,12 +43,12 @@ module.exports = (usersRepository) => async (req, res) => {
         return;
     }
 
-    let token = jwt.sign(result.id);
-    delete result.id;
+    let token = jwt.sign(user.id);
+    delete user.id;
 
     res.cookie("access_token", token, { httpOnly: true, domain: "localhost" });
     res.setHeader("Content-Type", "application/json");
-    res.send(result);
+    res.send(user);
 };
 
 function validateFullName(fullName, requestErrors) {

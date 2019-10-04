@@ -1,4 +1,4 @@
-const createEndpoint = require("../../src/huts/create/endpoint");
+const createEndpoint = require("./endpoint");
 const theoretically = require('jasmine-theories');
 
 describe("create endpoint" , function() {

@@ -1,5 +1,5 @@
 const rewire = require("rewire");
-const HutsRepository = rewire("../../src/huts/repository");
+const HutsRepository = rewire("./repository");
 
 describe("huts repository" , function() {
     describe("constructor function", function() {

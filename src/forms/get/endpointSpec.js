@@ -1,4 +1,4 @@
-const getEndpoint = require("../../src/forms/get/endpoint");
+const getEndpoint = require("./endpoint");
 
 describe("get endpoint", function() {
     it("failes if the forms repository explodes", async function() {

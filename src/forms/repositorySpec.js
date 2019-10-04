@@ -1,4 +1,4 @@
-const FormsRepository = require("../../src/forms/repository");
+const FormsRepository = require("./repository");
 
 describe("findForm function", function() {
     it("fails if postgres throws an error while trying to find a form", async function() {
