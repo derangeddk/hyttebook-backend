@@ -9,9 +9,8 @@ Given('I am authenticated as a user', async function () {
 
     let usersReponse = await this.client.post("/users", { username, email, password, fullName });
 
-
     let jwt = retrieveToken(usersReponse.headers['set-cookie'][0])
-    this.setUser(jwt);
+    this.setToken(jwt);
 });
 
 function retrieveToken(cookieWithToken) {

@@ -20,7 +20,7 @@ Before(async function(testcase) {
         baseURL: `http://localhost:${config.port}`,
     });
 
-    this.setUser = (token) => {
+    this.setToken = (token) => {
         this.client = axios.create({
             baseURL: `http://localhost:${config.port}`,
             headers:{
