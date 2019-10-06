@@ -1,3 +1,5 @@
+const jwt = require("../../middleware/jwt");
+
 module.exports = (roleConnectionsRepository) => async (req, res) => {
     if(!req.auth) {
         res.status(400);
@@ -7,7 +9,6 @@ module.exports = (roleConnectionsRepository) => async (req, res) => {
 
     let roleConnection;
     try {
-        console.log()
         roleConnection = await roleConnectionsRepository.findByUserId(req.auth.user_id);
     } catch (error) {
         console.error("roleConnections Respository failed while trying to find a roleConenction. Here's the error: ", error);
@@ -15,4 +16,9 @@ module.exports = (roleConnectionsRepository) => async (req, res) => {
         res.send();
         return;
     }
+
+    let token = jwt.sign(req.auth.user_id, roleConnection.hutId);
+    res.cookie("access_token", token, { httpOnly: true, domain: "localhost" });
+    res.send();
+    return;
 };
