@@ -1,9 +1,11 @@
+const jwt = require("../middleware/jwt");
+
 module.exports = (users) => async (req, res) => {
     let { email, password } = req.body;
 
-    let result;
+    let user;
     try{
-        result =  await users.authenticate(email, password);
+        user =  await users.authenticate(email, password);
     } catch(error) {
         if(error.code) {
             if(error.code) {
@@ -19,8 +21,10 @@ module.exports = (users) => async (req, res) => {
         }
     }
 
-    let user = {};
-    user.username = result.username;
+    let token = jwt.sign(user.id);
+    delete user.id;
 
-    res.send({user});
+    res.cookie("access_token", token, { httpOnly: true, domain: "localhost" });
+    res.setHeader("Content-Type", "application/json");
+    res.send({ user });
 };
