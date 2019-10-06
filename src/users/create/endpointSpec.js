@@ -37,7 +37,7 @@ describe("users create endpoint", function() {
             'verdens bedste bruger 123'
         );
         expect(res.setHeader).toHaveBeenCalledWith("Content-Type", "application/json");
-        expect(res.cookie).toHaveBeenCalled();
+        expect(res.cookie).toHaveBeenCalledTimes(1);
         expect(res.send).toHaveBeenCalledWith(newUser);
     });
 });
