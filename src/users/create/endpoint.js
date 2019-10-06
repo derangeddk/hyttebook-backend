@@ -43,12 +43,12 @@ module.exports = (usersRepository) => async (req, res) => {
         return;
     }
 
-    let token = jwt.sign(user.id, undefined);
+    let token = jwt.sign(user.id);
     delete user.id;
 
     res.cookie("access_token", token, { httpOnly: true, domain: "localhost" });
     res.setHeader("Content-Type", "application/json");
-    res.send(user);
+    res.send({ user });
 };
 
 function validateFullName(fullName, requestErrors) {

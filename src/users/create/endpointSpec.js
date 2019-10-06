@@ -2,14 +2,14 @@ const createEndpoint = require("./endpoint");
 
 describe("users create endpoint", function() {
     it("creates a user with a username and a password", async function() {
-        let newUser = {
+        let user = {
             id: "some UUID",
             username: "test-user-05",
             fullName: "verdens bedste bruger 123"
      };
 
         let usersRepository = {
-            create: jasmine.createSpy("users.create").and.callFake(async () => newUser)
+            create: jasmine.createSpy("users.create").and.callFake(async () => user)
         };
 
         let endpoint = createEndpoint(usersRepository);
@@ -38,6 +38,6 @@ describe("users create endpoint", function() {
         );
         expect(res.setHeader).toHaveBeenCalledWith("Content-Type", "application/json");
         expect(res.cookie).toHaveBeenCalledTimes(1);
-        expect(res.send).toHaveBeenCalledWith(newUser);
+        expect(res.send).toHaveBeenCalledWith({ user });
     });
 });
