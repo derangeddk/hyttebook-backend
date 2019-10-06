@@ -122,7 +122,7 @@ async function authenticate(db, email, password) {
                 id,
                 passwordHash,
                 salt,
-                data
+                username
              FROM users
              WHERE email = $1::text
              `,
@@ -141,14 +141,16 @@ async function authenticate(db, email, password) {
         throw error;
     }
 
-
     if(!passwordEncryption.hashedPasswordAndTypedPasswordMatch(result.rows[0].salt, result.rows[0].passwordhash, password)){
         let error = new Error("The password was incorrect")
         error.code = "INCORRECT";
         throw error;
     }
 
+    let user = {
+        id: result.rows[0].id,
+        username: result.rows[0].username
+    };
 
-
-    return { username: result.rows[0].data.username };
+    return user;
 }
