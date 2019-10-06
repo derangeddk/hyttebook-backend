@@ -43,7 +43,7 @@ module.exports = (usersRepository) => async (req, res) => {
         return;
     }
 
-    let token = jwt.sign(user.id);
+    let token = jwt.sign(user.id, undefined);
     delete user.id;
 
     res.cookie("access_token", token, { httpOnly: true, domain: "localhost" });

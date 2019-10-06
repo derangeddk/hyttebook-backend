@@ -106,7 +106,12 @@ async function createUser(db, username, password, email, fullName) {
         throw error;
     }
 
-    return { id, username, email };
+    let user = {
+        id,
+        username
+    }
+
+    return user;
 }
 
 async function authenticate(db, email, password) {
