@@ -75,6 +75,7 @@ module.exports = (config) => {
             await usersRepository.initialize();
             await formsRepository.initialize();
             await hutsRepository.initialize();
+            await roleConnectionsRepository.initialize();
 
             const listen = promisify(callback => {
                 server = app.listen(config.port, callback)
