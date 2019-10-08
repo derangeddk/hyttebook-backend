@@ -40,8 +40,8 @@ async function createHutWithImplicitFormAndAdmin(db, hut, userId) {
     let hutId = uuid.v4();
 
     await createHut(db, hut, hutId);
-    await createForm(db, hutId);
-    await createRoleConnection(db, hutId, userId);
+    await createImplicitForm(db, hutId);
+    await makeCreatingUserAdministrator(db, hutId, userId);
 
     return hutId;
 };
@@ -75,7 +75,7 @@ async function createHut(db, hut, hutId) {
     return;
 };
 
-async function createForm(db, hutId) {
+async function createImplicitForm(db, hutId) {
     let id = uuid.v4();
     let now = (new Date()).toISOString();
 
@@ -121,7 +121,7 @@ async function createForm(db, hutId) {
     return;
 };
 
-async function createRoleConnection(db, hutId, userId) {
+async function makeCreatingUserAdministrator(db, hutId, userId) {
     let role = 1;
 
     try {
