@@ -418,7 +418,50 @@ describe("huts repository" , function() {
         });
 
         it("implicitly creates an administrator role connection between the hut and the creating user after creating a hut and a form", async function() {
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async () => {})
+            };
 
+            let hutsRepository = new HutsRepository(db);
+
+            let hutData = {
+                hutName: "test hut",
+                street: "test street",
+                streetNumber: "1",
+                city: "test city",
+                zipCode: "2400",
+                email: "test@test.test",
+                phone: "74654010"
+            };
+            let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
+            let hutId = jasmine.any(String);
+            let role = 1;
+
+            let actualError = null;
+            try {
+                hutId = await hutsRepository.create(hutData, userId);
+            } catch(error) {
+                actualError = error;
+            }
+
+            expect(db.query).toHaveBeenCalledWith(
+            `INSERT INTO role_connections(
+                user_id,
+                hut_id,
+                role
+            )
+            VALUES(
+                $1::uuid,
+                $2::uuid,
+                $3::integer
+            )`,
+            [
+                userId,
+                hutId,
+                role
+            ]);
+            expect(hutId).toEqual(jasmine.any(String));
+            expect(actualError).toBe(null);
         });
     });
 
