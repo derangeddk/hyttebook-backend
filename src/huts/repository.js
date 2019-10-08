@@ -6,7 +6,7 @@ module.exports = function constructor(db) {
             await ensureHutsTableExists(db);
             await ensureRoleConnectionsTableExists(db);
         },
-        create: (hutData, userId) => createHut(db, hutData, userId),
+        create: (hut, userId) => createHutWithImplicitFormAndAdmin(db, hut, userId),
         find: (hutId) => findHut(db, hutId),
     };
 };
@@ -30,7 +30,7 @@ async function ensureRoleConnectionsTableExists(db) {
 };
 
 async function ensureHutsTableExists(db) {
-    if(await tableExists(db)) {
+    if(await hutsTableExists(db)) {
         return;
     }
     try {
@@ -54,7 +54,7 @@ async function roleConnectionsTableExists(db) {
     return true;
 };
 
-async function tableExists(db) {
+async function hutsTableExists(db) {
     try {
         await db.query(
             `SELECT 'public.huts'::regclass`
@@ -93,8 +93,17 @@ async function findHut(db, hutId) {
     return hut;
 };
 
-async function createHut(db, hutData, userId) {
-    let id = uuid.v4();
+async function createHutWithImplicitFormAndAdmin(db, hut, userId) {
+    let hutId = uuid.v4();
+
+    await createHut(db, hut, hutId);
+    await createForm(db, hutId);
+    await createRoleConnection(db, hutId, userId);
+
+    return hutId;
+};
+
+async function createHut(db, hut, hutId) {
     let now = (new Date()).toISOString();
 
     try {
@@ -108,17 +117,24 @@ async function createHut(db, hutData, userId) {
                 $2::json
             )`,
             [
-                id,
+                hutId,
                 {
                     createdAt: now,
                     updatedAt: now,
-                    ...hutData
+                    ...hut
                 }
             ]
         )
     } catch(error) {
         throw new Error("tried to insert a new hut into 'huts' tabel", error);
     }
+
+    return;
+};
+
+async function createForm(db, hutId) {
+    let id = uuid.v4();
+    let now = (new Date()).toISOString();
 
     let formConfigs=  {
         showOrgType: false,
@@ -132,31 +148,6 @@ async function createHut(db, hutData, userId) {
         stdDepartureTime: false,
         stdInformation: ""
     };
-
-    try {
-        await createForm(db, formConfigs, id);
-    } catch(error) {
-        throw new Error("failed to implicitly create a form after creating a hut", error);
-    }
-
-    let roleConnection = {
-        userId,
-        hutId: id,
-        role: 1
-    };
-
-    try{
-        await createRoleConnection(db, roleConnection);
-    } catch(error) {
-        throw new Error("failed to implicitly create roleConnection after creating a hut and a form", error);
-    }
-
-    return id;
-};
-
-async function createForm(db, formConfigs, hutId) {
-    let id = uuid.v4();
-    let now = (new Date()).toISOString();
 
     try {
         await db.query(
@@ -187,8 +178,8 @@ async function createForm(db, formConfigs, hutId) {
     return;
 };
 
-async function createRoleConnection(db, roleConnection) {
-    let { userId, hutId, role } = roleConnection;
+async function createRoleConnection(db, hutId, userId) {
+    let role = 1;
 
     try {
         await db.query(
@@ -214,3 +205,4 @@ async function createRoleConnection(db, roleConnection) {
 
     return;
 };
+
