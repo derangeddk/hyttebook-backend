@@ -1,4 +1,5 @@
 const uuid = require('uuid');
+const tableExists = require("../repositoryUtils/tableExists");
 
 module.exports = function constructor(db) {
     return {
@@ -150,7 +151,7 @@ async function makeCreatingUserAdministrator(db, hutId, userId) {
 };
 
 async function ensureRoleConnectionsTableExists(db) {
-    if(await roleConnectionsTableExists(db)) {
+    if(await tableExists(db, "role_connections")) {
         return;
     }
 
@@ -168,40 +169,13 @@ async function ensureRoleConnectionsTableExists(db) {
 };
 
 async function ensureHutsTableExists(db) {
-    if(await hutsTableExists(db)) {
+    if(await tableExists(db, "huts")) {
         return;
     }
+
     try {
         await db.query("CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)");
     } catch(error) {
         throw new Error("failed while trying to create 'huts' table", error);
     }
-};
-
-async function roleConnectionsTableExists(db) {
-    try {
-        await db.query(
-            `SELECT 'public.role_connections'::regclass`
-        );
-    } catch(error) {
-        if(error.message === 'relation "public.role_connections" does not exist') {
-            return false;
-        }
-        throw new Error("Tried to assertain the existence of a 'role_connections' table", error);
-    }
-    return true;
-};
-
-async function hutsTableExists(db) {
-    try {
-        await db.query(
-            `SELECT 'public.huts'::regclass`
-        );
-    } catch(error) {
-        if(error.message === 'relation "public.huts" does not exist') {
-            return false;
-        }
-        throw new Error("Tried to assertain the existence of a 'huts' table", error);
-    }
-    return true;
 };
