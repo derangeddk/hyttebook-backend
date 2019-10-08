@@ -388,31 +388,32 @@ describe("huts repository" , function() {
                 phone: "74654010"
             };
             let userId = "87bf5232-d8ee-475f-bf46-22dc5aac7531";
+            let hutId = jasmine.any(String);
+            let role = 1;
 
             let actualError = null;
             try {
-                await hutsRepository.create(hutData, userId);
+                hutId = await hutsRepository.create(hutData, userId);
             } catch(error) {
                 actualError = error;
             }
 
-            // expect(db.query).toHaveBeenCalledWith(
-            //     `INSERT INTO role_connections(
-            //         user_id,
-            //         hut_id,
-            //         role
-            //     ),
-            //     VALUES(
-            //         $1::uuid,
-            //         $2::uuid,
-            //         $3::integer
-            //     )`,
-            //     [
-            //         userId,
-            //         hutId = jasmine.any(String),
-            //         role = 1
-            //     ]
-            // );
+            expect(db.query).toHaveBeenCalledWith(
+            `INSERT INTO role_connections(
+                user_id,
+                hut_id,
+                role
+            )
+            VALUES(
+                $1::uuid,
+                $2::uuid,
+                $3::integer
+            )`,
+            [
+                userId,
+                hutId,
+                role
+            ]);
             expect(actualError).not.toBe(null);
         });
 
