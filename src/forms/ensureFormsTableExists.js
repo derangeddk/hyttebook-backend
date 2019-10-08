@@ -1,5 +1,7 @@
+const tableExists = require("../repositoryUtils/tableExists");
+
 module.exports = async function ensureFormsTableExists(db) {
-    if(await tableExists(db)) {
+    if(await tableExists(db, "forms")) {
         return;
     }
 
@@ -14,16 +16,4 @@ module.exports = async function ensureFormsTableExists(db) {
     } catch(error) {
         throw new Error("Something went wrong upon creating the forms table: ", error);
     }
-}
-
-async function tableExists(db) {
-    try {
-        await db.query(
-            `SELECT 'public.forms'::regclass`
-        );
-    } catch(error) {
-        return false;
-    }
-
-    return true;
 }

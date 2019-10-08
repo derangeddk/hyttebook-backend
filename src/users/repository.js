@@ -1,5 +1,6 @@
 const uuid = require('uuid');
 const passwordEncryption = require("./passwordEncryption");
+const tableExists = require("../repositoryUtils/tableExists");
 
 module.exports = function constructor(db) {
     return {
@@ -10,7 +11,7 @@ module.exports = function constructor(db) {
 };
 
 async function ensureUsersTableExists(db) {
-    if (await tableExists(db)){
+    if (await tableExists(db, "users")){
         return;
     }
 
@@ -32,19 +33,6 @@ async function ensureUsersTableExists(db) {
         console.error("Something went wrong upon creating the users table", error);
         process.exit(1);
     }
-}
-
-async function tableExists(db) {
-    try {
-        await db.query(
-            `SELECT 'public.users'::regclass`
-        );
-    } catch(error) {
-        console.error('No users table was found. An attempt at creating one will now proceed. This was the error: ', error);
-        return false;
-    }
-
-    return true;
 }
 
 async function createUser(db, username, password, email, fullName) {
