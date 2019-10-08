@@ -313,7 +313,8 @@ describe("huts repository" , function() {
 
             expect(hutId).not.toBe(undefined);
             expect(actualError).toBe(null);
-            expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
+            expect(db.query).toHaveBeenCalledWith(
+            `INSERT INTO huts(
                 id,
                 data
             )
@@ -335,7 +336,8 @@ describe("huts repository" , function() {
                     phone: "74654010"
                 }
             ]);
-            expect(db.query).toHaveBeenCalledWith(`INSERT INTO forms(
+            expect(db.query).toHaveBeenCalledWith(
+            `INSERT INTO forms(
                 id,
                 hutId,
                 data
