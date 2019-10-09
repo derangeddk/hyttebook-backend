@@ -174,7 +174,12 @@ async function ensureHutsTableExists(db) {
     }
 
     try {
-        await db.query("CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)");
+        await db.query(
+            `CREATE TABLE huts(
+                id uuid UNIQUE PRIMARY KEY,
+                data json NOT NULL
+            )`
+        );
     } catch(error) {
         throw new Error("failed while trying to create 'huts' table", error);
     }
