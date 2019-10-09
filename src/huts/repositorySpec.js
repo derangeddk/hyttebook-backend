@@ -1,6 +1,12 @@
 const HutsRepository = require("./repository");
+const { sqlEquality } = require("../../spec/support/customEqualityTesters");
 
 describe("huts repository" , function() {
+
+    beforeEach(function () {
+        jasmine.addCustomEqualityTester(sqlEquality);
+    });
+
     describe("constructor function", function() {
         it("creates a repository if the huts and role_connections table already exists",async function() {
             let db = {
