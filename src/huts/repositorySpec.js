@@ -103,7 +103,12 @@ describe("huts repository" , function() {
 
             expect(actualError).toBe(null);
             expect(db.query.calls.count(2));
-            expect(db.query).toHaveBeenCalledWith('CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)');
+            expect(db.query).toHaveBeenCalledWith(
+                `CREATE TABLE huts(
+                    id uuid UNIQUE PRIMARY KEY,
+                    data json NOT NULL
+                )`
+            );
         });
     });
 
