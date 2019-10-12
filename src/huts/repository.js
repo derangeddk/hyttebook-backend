@@ -9,6 +9,7 @@ module.exports = function constructor(db) {
         },
         create: (hut, userId) => createHutWithImplicitFormAndAdmin(db, hut, userId),
         find: (hutId) => findHut(db, hutId),
+        findByUserId: (userId) => findHutsByUserId(db, userId),
     };
 };
 
@@ -36,6 +37,23 @@ async function findHut(db, hutId) {
 
     return hut;
 };
+
+async function findHutsByUserId(db, userId) {
+    let queryResult;
+
+    try {
+        queryResult = await db.query(
+            `SELECT hut_id, hutName FROM huts, role_connections
+                WHERE user_id = ${userId}`
+        );
+    } catch(error) {
+        throw new Error("tried to find the users huts");
+    }
+
+    let huts = [];
+
+    return huts;
+}
 
 async function createHutWithImplicitFormAndAdmin(db, hut, userId) {
     let hutId = uuid.v4();

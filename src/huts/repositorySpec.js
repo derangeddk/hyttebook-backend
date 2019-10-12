@@ -30,6 +30,7 @@ describe("huts repository" , function() {
                 initialize: jasmine.any(Function),
                 create: jasmine.any(Function),
                 find: jasmine.any(Function),
+                findByUserId:jasmine.any(Function)
             });
         });
 
@@ -536,6 +537,37 @@ describe("huts repository" , function() {
                 WHERE id = '${hutId}'`
             );
             expect(actualError).toEqual(null);
+        });
+    });
+
+    describe("findHutsByUserId function", function() {
+        it("fails if database explodes", async function() {
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async (query) => {
+                    if(query.startsWith("SELECT hut_id, hutName FROM huts, role_connections")) {
+                        throw new Error("database exploded");
+                    }
+                })
+            };
+
+            let hutsRepository = new HutsRepository(db);
+
+            let userId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
+
+            let huts;
+
+            let actualError = null;
+            try {
+                huts = await hutsRepository.findByUserId(userId);
+            } catch(error) {
+                actualError = error;
+            }
+
+            expect(actualError).not.toBe(null);
+            expect(db.query).toHaveBeenCalledWith(
+                `SELECT hut_id, hutName FROM huts, role_connections
+                WHERE user_id = ${userId}`
+            )
         });
     });
 });
