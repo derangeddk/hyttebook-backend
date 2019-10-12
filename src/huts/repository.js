@@ -195,6 +195,7 @@ async function ensureHutsTableExists(db) {
         await db.query(
             `CREATE TABLE huts(
                 id uuid UNIQUE PRIMARY KEY,
+                name text NOT NULL,
                 data json NOT NULL
             )`
         );
