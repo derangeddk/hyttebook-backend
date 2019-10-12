@@ -43,8 +43,9 @@ async function findHutsByUserId(db, userId) {
 
     try {
         queryResult = await db.query(
-            `SELECT hut_id, hutName FROM huts, role_connections
-                WHERE user_id = ${userId}`
+            `SELECT role_connections.hut_id, huts.name FROM huts
+                JOIN role_connections ON huts.id = role_connections.hut_id
+                WHERE role_connections.user_id = '${userId}'`
         );
     } catch(error) {
         throw new Error("tried to find the users huts");
