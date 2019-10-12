@@ -9,7 +9,7 @@ module.exports = (hutsRepository) => async (req, res) => {
         return;
     }
 
-    if(huts.length === 0) {
+    if(!huts) {
         res.status(204);
         res.send({ message: "The user are not affiliated with any huts" });
         return;
