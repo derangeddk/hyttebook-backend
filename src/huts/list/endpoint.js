@@ -1,7 +1,7 @@
 module.exports = (hutsRepository) => async (req, res) => {
     let huts;
     try {
-        huts = await hutsRepository.findAllByUserId(req.auth.user_id);
+        huts = await hutsRepository.findByUserId(req.auth.user_id);
     } catch(error) {
         console.error("hutsRepository failed with the following error: ", error);
         res.status(500);
