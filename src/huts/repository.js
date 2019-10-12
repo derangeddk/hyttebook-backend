@@ -51,7 +51,11 @@ async function findHutsByUserId(db, userId) {
         throw new Error("tried to find the users huts");
     }
 
-    let huts = [];
+    let huts = queryResult.rows;
+
+    if(huts.length === 0) {
+        return;
+    }
 
     return huts;
 }
