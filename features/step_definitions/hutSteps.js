@@ -37,7 +37,10 @@ Then('the hut should have a form', async function () {
 });
 
 Then('I should be admin of a hut named {string}', async function (string) {
-    let huts = await client.get(`/huts/`);
+    let response = await this.client.get(`/huts/`);
+
+    let huts = response.data;
 
     assert.deepStrictEqual(string, huts[0].name);
+    assert.deepStrictEqual(this.hutId, huts[0].hut_id);
   });
