@@ -544,7 +544,7 @@ describe("huts repository" , function() {
         it("fails if database explodes", async function() {
             let db = {
                 query: jasmine.createSpy("db.query").and.callFake(async (query) => {
-                    if(query.startsWith("SELECT hut_id, hutName FROM huts, role_connections")) {
+                    if(query.startsWith("SELECT role_connections.hut_id, huts.name FROM huts")) {
                         throw new Error("database exploded");
                     }
                 })
