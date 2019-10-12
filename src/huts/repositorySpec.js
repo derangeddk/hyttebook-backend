@@ -565,9 +565,41 @@ describe("huts repository" , function() {
 
             expect(actualError).not.toBe(null);
             expect(db.query).toHaveBeenCalledWith(
-                `SELECT hut_id, hutName FROM huts, role_connections
-                WHERE user_id = ${userId}`
-            )
+                `SELECT role_connections.hut_id, huts.name FROM huts
+                JOIN role_connections ON huts.id = role_connections.hut_id
+                WHERE role_connections.user_id = '${userId}'`
+            );
+        });
+
+        it("succeeds if the user doesn't have any huts", async function() {
+            let queryResult = {
+                rows: []
+            };
+
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async () => queryResult)
+            };
+
+            let hutsRepository = new HutsRepository(db);
+
+            let userId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
+
+            let huts;
+            let actualError = null;
+            try {
+                huts = await hutsRepository.findByUserId(userId);
+            } catch(error) {
+                console.log("######", error);
+                actualError = error;
+            }
+
+            expect(actualError).toBe(null);
+            expect(db.query).toHaveBeenCalledWith(
+                `SELECT role_connections.hut_id, huts.name FROM huts
+                    JOIN role_connections ON huts.id = role_connections.hut_id
+                    WHERE role_connections.user_id = '${userId}'`
+            );
+            expect(huts).toEqual(undefined);
         });
     });
 });
