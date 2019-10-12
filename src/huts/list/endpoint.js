@@ -15,6 +15,6 @@ module.exports = (hutsRepository) => async (req, res) => {
         return;
     }
 
-    res.send({ huts });
+    res.send(huts);
     return;
 };
