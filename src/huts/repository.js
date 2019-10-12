@@ -72,14 +72,17 @@ async function createHut(db, hut, hutId) {
         await db.query(
             `INSERT INTO huts(
                 id,
+                name,
                 data
             )
             VALUES(
                 $1::uuid,
-                $2::json
+                $2::text,
+                $3::json
             )`,
             [
                 hutId,
+                hut.hutName,
                 {
                     createdAt: now,
                     updatedAt: now,
