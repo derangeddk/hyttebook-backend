@@ -107,6 +107,7 @@ describe("huts repository" , function() {
             expect(db.query).toHaveBeenCalledWith(
                 `CREATE TABLE huts(
                     id uuid UNIQUE PRIMARY KEY,
+                    name text NOT NULL,
                     data json NOT NULL
                 )`
             );
@@ -142,14 +143,17 @@ describe("huts repository" , function() {
             expect(actualError).toBe(null);
             expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
                 id,
+                name,
                 data
             )
             VALUES(
                 $1::uuid,
-                $2::json
+                $2::text,
+                $3::json
             )`,
             [
                 id,
+                hutData.hutName,
                 {
                     createdAt: jasmine.any(String),
                     updatedAt: jasmine.any(String),
@@ -195,14 +199,17 @@ describe("huts repository" , function() {
             expect(actualError).not.toBe(null);
             expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
                 id,
+                name,
                 data
             )
             VALUES(
                 $1::uuid,
-                $2::json
+                $2::text,
+                $3::json
             )`,
             [
                 jasmine.any(String),
+                hutData.hutName,
                 {
                     createdAt: jasmine.any(String),
                     updatedAt: jasmine.any(String),
@@ -248,14 +255,17 @@ describe("huts repository" , function() {
             expect(actualError).not.toBe(null);
             expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
                 id,
+                name,
                 data
             )
             VALUES(
                 $1::uuid,
-                $2::json
+                $2::text,
+                $3::json
             )`,
             [
                 jasmine.any(String),
+                hutData.hutName,
                 {
                     createdAt: jasmine.any(String),
                     updatedAt: jasmine.any(String),
@@ -328,14 +338,17 @@ describe("huts repository" , function() {
             expect(db.query).toHaveBeenCalledWith(
             `INSERT INTO huts(
                 id,
+                name,
                 data
             )
             VALUES(
                 $1::uuid,
-                $2::json
+                $2::text,
+                $3::json
             )`,
             [
                 hutId,
+                hutData.hutName,
                 {
                     createdAt: jasmine.any(String),
                     updatedAt: jasmine.any(String),
