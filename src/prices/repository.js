@@ -1,4 +1,5 @@
 const uuid = require('uuid');
+const tableExists = require("../repositoryUtils/tableExists");
 
 /**
  * Price {
@@ -29,12 +30,9 @@ module.exports = function constructor(db) {
 };
 
 async function ensurePricesTableExists(db) {
-    if(await pricesTableExists(db)) {
-        console.log("prices table exist")
+    if(await tableExists(db, "prices")) {
         return;
     }
-    console.log("prices table doesn't exist")
-
 
     try {
         await db.query(
@@ -44,20 +42,6 @@ async function ensurePricesTableExists(db) {
         throw new Error("failed to create 'prices' table", error);
     }
 }; 
-
-async function pricesTableExists(db) {
-    try {
-        await db.query(
-            `SELECT 'public.prices'::regclass`
-        );
-    } catch(error) {
-        if(error.message === 'relation "public.prices" does not exist') {
-            return false;
-        }
-        throw new Error("Tried to assertain the existence of a 'prices' table", error);
-    }
-    return true;
-};
 
 async function createPrice(db, priceData) {
     let id = uuid.v4();
