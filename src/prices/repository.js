@@ -3,15 +3,17 @@ const uuid = require('uuid');
 /**
  * Price {
  *     id:  uuid
- *     createdAt: ISO8601string
- *     updatedAt: ISO8601string
- *     mon: number
- *     tue: number
- *     wed: number
- *     thu: number
- *     fri: number
- *     sat: number
- *     sun: number
+ *     data {
+ *         createdAt: ISO8601string
+ *         updatedAt: ISO8601string
+ *         mon: number
+ *         tue: number
+ *         wed: number
+ *         thu: number
+ *         fri: number
+ *         sat: number
+ *         sun: number
+ *     }
  * }
  */
 module.exports = function constructor(db) {
