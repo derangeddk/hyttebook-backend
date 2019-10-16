@@ -12,6 +12,48 @@ module.exports = function constructor(db) {
     };
 };
 
+/*
+Hut {
+    id: uuid
+    data: {
+        createdAt: ISO8601string
+        updatedAt: ISO8601string
+        hutName: string
+        street: string
+        streetNumber: string
+        city: string
+        zipCode: string
+        email: string
+        phone: string
+    }
+}
+
+Role {
+    id: uuid
+    hut_id: uuid
+    role: int
+}
+
+Form {
+    id: uuid
+    hutId: uuid
+    {
+        createdAt: string,
+        updatedAt: string,
+        showOrgType: bool,
+        showBankDetails: bool,
+        showEan: bool,
+        showCleaningToggle: bool,
+        defaultCleaningInclude: bool,
+        showArrivalTime: bool,
+        showDepartureTime: bool,
+        stdArrivalTime: bool,
+        stdDepartureTime: bool,
+        stdInformation: string
+    }
+} 
+*/
+
 async function findHut(db, hutId) {
     let result;
     try {
