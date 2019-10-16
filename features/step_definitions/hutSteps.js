@@ -27,7 +27,6 @@ Then('a hut should exist with the following information:', async function (dataT
     expectedHutData.id = this.hutId;
 
     let actualHutData = await this.client.get(`/huts/${this.hutId}`);
-    delete actualHutData.data.priceid;
 
     assert.deepStrictEqual(actualHutData.data, expectedHutData);
 });
