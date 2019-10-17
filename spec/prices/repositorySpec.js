@@ -1,7 +1,14 @@
 const rewire = require("rewire");
 const PricesRepository = rewire("../../src/prices/repository");
+const { sqlEquality } = require("../../spec/support/customEqualityTesters");
+
 
 describe("prices repository" , function() {
+
+    beforeEach(function () {
+        jasmine.addCustomEqualityTester(sqlEquality);
+    });
+    
     describe("constructor function", function() {
         it("creates a repository if the prices table already exists",async function() {
             let db = {
@@ -48,7 +55,7 @@ describe("prices repository" , function() {
             expect(db.query).toHaveBeenCalledWith("SELECT 'public.prices'::regclass");
             expect(actualError).not.toBe(null);
         });
-/*
+
         it("explodes if the database explodes while creating the huts table, if the table does not already exist", async function() {
             let db = {
                 query: jasmine.createSpy("db.query").and.callFake(async (query) => {
@@ -73,10 +80,10 @@ describe("prices repository" , function() {
             }
 
             expect(actualError).toEqual(jasmine.any(Error));
-            expect(db.query.calls.allArgs(["SELECT 'public.huts'::regclass"],['CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']));
+            expect(db.query.calls.allArgs(["SELECT 'public.prices'::regclass"],['CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']));
             expect(db.query.calls.count(2));
         });
-*/
+
         it("creates the prices table if the table does not already exist",async function() {
             let db = {
                 query: jasmine.createSpy("db.query").and.callFake(async (query) => {
