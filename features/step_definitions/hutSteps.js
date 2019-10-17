@@ -10,10 +10,22 @@ When('I register a hut with the following information:', async function (dataTab
         city,
         zipCode,
         email,
-        phone
+        phone,
+        prices
     } = dataTable.hashes()[0];
 
-    let hutResponse = await this.client.post("/huts", { hutName, street, streetNumber, city, zipCode, email, phone });
+    let pricesCleaned = prices.split(',').map(p => parseInt(p.trim()));
+    let pricesObject = {
+        monday: pricesCleaned[0],
+        tuesday: pricesCleaned[1],
+        wednesday: pricesCleaned[2],
+        thursday: pricesCleaned[3],
+        friday: pricesCleaned[4],
+        saturday: pricesCleaned[5],
+        sunday: pricesCleaned[6]
+    };
+
+    let hutResponse = await this.client.post("/huts", { hutName, street, streetNumber, city, zipCode, email, phone, prices: pricesObject });
     this.hutId = hutResponse.data;
 });
 
