@@ -110,7 +110,7 @@ describe("create endpoint" , function() {
         expect(hutsRepository.create).toHaveBeenCalledWith( hutData, user_id );
     });
 
-    it("fails if the repository explodes", async function() { 
+    it("fails if the repository explodes", async function() {
 
         hutsRepository = {
             create: jasmine.createSpy("hutsRepository.create").and.callFake(async () => {
@@ -131,5 +131,31 @@ describe("create endpoint" , function() {
         expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.send).toHaveBeenCalledTimes(1);
         expect(res.send).toHaveBeenCalledWith({ error: "tried to create hut but couldn't"});
+    });
+
+
+    theoretically.it("fails if %s has an empty object", hutPropertiesToBeTested, async function(emptyProperty) {
+        req.body[emptyProperty] = { };
+
+        let requestErrors = {
+            errorCount: 1,
+        };
+        
+        requestErrors[emptyProperty] = {
+            code: jasmine.any(String),
+            da: jasmine.any(String)
+        };
+        
+        try {
+            await endpoint(req, res);
+        } catch(error) {
+            actualError = error;
+        }
+
+        expect(actualError).toBe(null);
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledWith({requestErrors});
     });
 });
