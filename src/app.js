@@ -5,6 +5,7 @@ const dummyScript = fs.readFileSync(path.join(__dirname, "dummyScript.js"), "utf
 const usersApp = require("./users/app");
 const bodyParser = require("body-parser");
 const loginEndpoint = require('./login/endpoint');
+const logoutEndpoint = require("./logout/endpoint");
 const formsApp = require('./forms/app');
 const hutsApp = require('./huts/app');
 const { promisify } = require('util');
@@ -50,6 +51,7 @@ module.exports = (config) => {
     app.use("/users", usersApp(usersRepository));
     //From now on users should be authenticated
     app.use(auth);
+    app.post("/logout", logoutEndpoint);
     app.use("/forms", formsApp(formsRepository));
     app.use("/huts", hutsApp(hutsRepository));
 
