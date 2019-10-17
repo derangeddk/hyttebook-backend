@@ -49,6 +49,14 @@ function validateHutName(hutName, requestErrors) {
         requestErrors.errorCount++;
         return;
     }
+    if(typeof hutName !== 'string') {
+        requestErrors.hutName = {
+            code: "TYPE",
+            da: "Hyttenavn skal være en tekst-streng"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
 
     return hutName.trim();
 }
@@ -58,6 +66,14 @@ function validateStreet(street, requestErrors) {
         requestErrors.street = {
             code: "MISSING",
             da: "Indtast venligst vejnavn"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+    if(typeof street !== 'string') {
+        requestErrors.street = {
+            code: "TYPE",
+            da: "Vejnavn skal være en tekst-streng"
         };
         requestErrors.errorCount++;
         return;
@@ -75,6 +91,15 @@ function validateStreetNumber(streetNumber, requestErrors) {
         requestErrors.errorCount++;
         return;
     }
+    if(typeof streetNumber !== 'string') {
+        requestErrors.streetNumber = {
+            code: "TYPE",
+            da: "Vej nummer skal være en tekst-streng"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+    return streetNumber.trim();
 }
 
 function validateCity(city, requestErrors) {
@@ -86,7 +111,15 @@ function validateCity(city, requestErrors) {
         requestErrors.errorCount++;
         return;
     }
-
+    if(typeof city !== 'string') {
+        requestErrors.city = {
+            code: "TYPE",
+            da: "Bynavn skal være en tekst-streng"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+        
     return city.trim();
 }
 
@@ -95,6 +128,15 @@ function validateZipCode(zipCode, requestErrors) {
         requestErrors.zipCode = {
             code: "MISSING",
             da: "Indtast venligst postnummeret"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+
+    if(typeof zipCode !== 'string') {
+        requestErrors.zipCode = {
+            code: "TYPE",
+            da: "Postnummer skal være en tekst-streng"
         };
         requestErrors.errorCount++;
         return;
@@ -124,6 +166,15 @@ function validateEmail(email, requestErrors) {
         return;
     }
 
+    if(typeof email !== 'string') {
+        requestErrors.email = {
+            code: "TYPE",
+            da: "Email skal være en tekst-streng"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+
     email = email.trim();
 
     if(!email.match(/^.+@.+$/)) {
@@ -143,6 +194,14 @@ function validatePhone(phone, requestErrors) {
         requestErrors.phone = {
             code: "MISSING",
             da: "Indtast venligst telefonnummer"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+    if(typeof phone !== 'string') {
+        requestErrors.phone = {
+            code: "TYPE",
+            da: "Telefonnummer skal være en tekst-streng"
         };
         requestErrors.errorCount++;
         return;
