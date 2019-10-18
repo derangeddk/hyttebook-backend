@@ -6,11 +6,13 @@ module.exports = (users) => async (req, res) => {
         user =  await users.find(userId);
     } catch(error) {
         if(error.code) {
-            if(!error.code) {
-                res.status(500).json({message: "An error occured that you can't help. Please refresh and start over"});
+            if(error.code == "NON-EXISTENT") {
+                res.status(204);
                 return;
             }
         }
+        res.status(500).json({message: "whoami failed"});
+        return;
     }
 
     res.setHeader("Content-Type", "application/json");

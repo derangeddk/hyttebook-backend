@@ -156,6 +156,7 @@ async function findById(db, userId) {
         )
     } catch(error) {
         console.error("error while trying to find user by id: " ,error);
+        throw new Error("users repository failed to find a user by id: ", error);
     }
 
     if(queryResult.rows.length != 1) {
