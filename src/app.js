@@ -4,6 +4,7 @@ const path = require("path");
 const dummyScript = fs.readFileSync(path.join(__dirname, "dummyScript.js"), "utf8");
 const usersApp = require("./users/app");
 const bodyParser = require("body-parser");
+const whoAmIEndpoint = require("./whoami/endpoint");
 const loginEndpoint = require('./login/endpoint');
 const logoutEndpoint = require("./logout/endpoint");
 const formsApp = require('./forms/app');
@@ -46,11 +47,12 @@ module.exports = (config) => {
     let usersRepository = new UsersRepository(db);
     let formsRepository = new FormsRepository(db);
     let hutsRepository = new HutsRepository(db);
-    
+
     app.post("/login", loginEndpoint(usersRepository));
     app.use("/users", usersApp(usersRepository));
     //From now on users should be authenticated
     app.use(auth);
+    app.get("/whoami", whoAmIEndpoint(usersRepository));
     app.post("/logout", logoutEndpoint);
     app.use("/forms", formsApp(formsRepository));
     app.use("/huts", hutsApp(hutsRepository));
