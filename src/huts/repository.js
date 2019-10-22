@@ -64,7 +64,7 @@ async function createHutWithImplicitFormAndAdmin(db, hut, userId) {
     let hutId = uuid.v4();
 
     await createHut(db, hut, hutId);
-    await createImplicitForm(db, hutId);
+    await createImplicitFormSettings(db, hutId);
     await makeCreatingUserAdministrator(db, hutId, userId);
 
     return hutId;
@@ -102,11 +102,11 @@ async function createHut(db, hut, hutId) {
     return;
 };
 
-async function createImplicitForm(db, hutId) {
+async function createImplicitFormSettings(db, hutId) {
     let id = uuid.v4();
     let now = (new Date()).toISOString();
 
-    let formConfigs=  {
+    let formSettings=  {
         showOrgType: false,
         showBankDetails: false,
         showEan: false,
@@ -121,7 +121,7 @@ async function createImplicitForm(db, hutId) {
 
     try {
         await db.query(
-            `INSERT INTO formSettings(
+            `INSERT INTO form_settings(
                 id,
                 hutId,
                 data
@@ -137,7 +137,7 @@ async function createImplicitForm(db, hutId) {
                 {
                     createdAt: now,
                     updatedAt: now,
-                    ...formConfigs
+                    ...formSettings
                 }
             ]
         );
