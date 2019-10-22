@@ -1,4 +1,4 @@
-module.exports = (formsRepository) => async (req, res) => {
+module.exports = (formSettingsRepository) => async (req, res) => {
     let actualFormConfigs = req.body;
     let hutId = req.params.id;
 
@@ -36,7 +36,7 @@ module.exports = (formsRepository) => async (req, res) => {
 
 
     try {
-        result = await formsRepository.update(hutId, actualFormConfigs);
+        result = await formSettingsRepository.update(hutId, actualFormConfigs);
     } catch(error) {
         console.error("tried to update form but couldn't: ", error);
         res.status(500).send({ error: "tried to update the form but couldn't"});

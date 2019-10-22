@@ -121,7 +121,7 @@ async function createImplicitForm(db, hutId) {
 
     try {
         await db.query(
-            `INSERT INTO forms(
+            `INSERT INTO formSettings(
                 id,
                 hutId,
                 data

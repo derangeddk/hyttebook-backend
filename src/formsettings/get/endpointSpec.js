@@ -1,7 +1,7 @@
 const getEndpoint = require("./endpoint");
 
 describe("get endpoint", function() {
-    it("failes if the forms repository explodes", async function() {
+    it("failes if the formSettings repository explodes", async function() {
         let req = {
             params: {
                 id: "9bdf21e7-52b8-4529-991b-5f2df9de0323"
@@ -16,13 +16,13 @@ describe("get endpoint", function() {
             return res;
         });
 
-        let formsRepository = {
-            find: jasmine.createSpy("formsRepository.find").and.callFake(async () => {
-                throw new Error("formsRepository exploded while trying to find a form");
+        let formSettingsRepository = {
+            find: jasmine.createSpy("formSettingsRepository.find").and.callFake(async () => {
+                throw new Error("formSettingsRepository exploded while trying to find a form");
             })
         };
 
-        let endpoint = getEndpoint(formsRepository);
+        let endpoint = getEndpoint(formSettingsRepository);
 
         let actualError = null;
         try {
@@ -64,11 +64,11 @@ describe("get endpoint", function() {
             stdInformation: ""
         };
 
-        let formsRepository = {
-            find: jasmine.createSpy("formsRepository.find").and.callFake(async () => form)
+        let formSettingsRepository = {
+            find: jasmine.createSpy("formSettingsRepository.find").and.callFake(async () => form)
         };
 
-        let endpoint = getEndpoint(formsRepository);
+        let endpoint = getEndpoint(formSettingsRepository);
 
         let actualError = null;
         try {

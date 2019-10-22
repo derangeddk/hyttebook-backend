@@ -31,7 +31,7 @@ Then('a hut should exist with the following information:', async function (dataT
 
 
 Then('the hut should have a form', async function () {
-    let actualForm = await this.client.get(`/forms/${this.hutId}`);
+    let actualForm = await this.client.get(`/formSettings/${this.hutId}`);
 
     assert.deepStrictEqual(actualForm.data.hutId, this.hutId);
 });

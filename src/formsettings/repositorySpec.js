@@ -1,20 +1,20 @@
-const FormsRepository = require("./repository");
+const formSettingsRepository = require("./repository");
 
 describe("findForm function", function() {
     it("fails if postgres throws an error while trying to find a form", async function() {
         let db = {
             query: jasmine.createSpy("db.query").and.callFake(async (query) => {
-                if(query.startsWith("SELECT * FROM forms")){
+                if(query.startsWith("SELECT * FROM formSettings")){
                     throw new Error("postgres exploded while trying to find a form");
                 }
             })
         };
 
-        let formsRepository = new FormsRepository(db);
+        let formSettingsRepository = new formSettingsRepository(db);
 
         let actualError = null;
         try {
-            await formsRepository.find("9bdf21e7-52b8-4529-991b-5f2df9de0323");
+            await formSettingsRepository.find("9bdf21e7-52b8-4529-991b-5f2df9de0323");
         } catch(error) {
             actualError = error;
         }
@@ -48,12 +48,12 @@ describe("findForm function", function() {
             query: jasmine.createSpy("db.query").and.callFake(async () => foundForm)
         };
 
-        let formsRepository = new FormsRepository(db);
+        let formSettingsRepository = new formSettingsRepository(db);
         let form;
 
         let actualError = null;
         try {
-            form = await formsRepository.find("9bdf21e7-52b8-4529-991b-5f2df9de0323");
+            form = await formSettingsRepository.find("9bdf21e7-52b8-4529-991b-5f2df9de0323");
         } catch(error) {
             actualError = error;
         }

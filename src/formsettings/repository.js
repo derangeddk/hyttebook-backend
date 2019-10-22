@@ -1,8 +1,8 @@
-const ensureFormsTableExists = require("../../src/forms/ensureFormsTableExists");
+const ensureformSettingsTableExists = require("../../src/formSettings/ensureformSettingsTableExists");
 
 module.exports = function constructor(db) {
     return {
-        initialize: async () => await ensureFormsTableExists(db),
+        initialize: async () => await ensureformSettingsTableExists(db),
         find: (hutId) => findForm(db, hutId),
         update: (hutId, formConfigs) => updateForm(db, hutId, formConfigs),
     };
@@ -11,7 +11,7 @@ module.exports = function constructor(db) {
 async function updateForm(db, hutId, formConfigs) {
     try {
         await db.query(
-            'UPDATE forms SET data = $1 WHERE hutId = $2',
+            'UPDATE formSettings SET data = $1 WHERE hutId = $2',
             [formConfigs, hutId]
             );
     } catch(error) {
@@ -24,7 +24,7 @@ async function updateForm(db, hutId, formConfigs) {
 async function findForm(db, hutId) {
     let result;
     try {
-        result = await db.query(`SELECT * FROM forms
+        result = await db.query(`SELECT * FROM formSettings
             WHERE hutId = '${hutId}'`
         );
     } catch(error) {

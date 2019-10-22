@@ -1,9 +1,9 @@
-module.exports = (formsRepository) => async (req, res) => {
+module.exports = (formSettingsRepository) => async (req, res) => {
     let hutId = req.params.id;
 
     let form;
     try {
-        form = await formsRepository.find(hutId);
+        form = await formSettingsRepository.find(hutId);
     } catch(error) {
         console.error("Tried to find a form but couldn't");
         res.status(500).send({ error: "Tried to find a form but couldn't" });

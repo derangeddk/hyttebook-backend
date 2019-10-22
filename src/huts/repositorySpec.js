@@ -227,7 +227,7 @@ describe("huts repository" , function() {
         it("fails if postgress explodes upon inserting a form after having created a hut", async function() {
             let db = {
                 query: jasmine.createSpy("db.query").and.callFake(async (query) => {
-                    if(query.startsWith("INSERT INTO forms")) {
+                    if(query.startsWith("INSERT INTO formSettings")) {
                         throw new Error("postgres exploded while trying to insert a form");
                     }
                 })
@@ -278,7 +278,7 @@ describe("huts repository" , function() {
                     phone: "74654010"
                 }
             ]);
-            expect(db.query).toHaveBeenCalledWith(`INSERT INTO forms(
+            expect(db.query).toHaveBeenCalledWith(`INSERT INTO formSettings(
                 id,
                 hutId,
                 data
@@ -362,7 +362,7 @@ describe("huts repository" , function() {
                 }
             ]);
             expect(db.query).toHaveBeenCalledWith(
-            `INSERT INTO forms(
+            `INSERT INTO formSettingsettings(
                 id,
                 hutId,
                 data
