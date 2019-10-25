@@ -7,12 +7,12 @@ const bodyParser = require("body-parser");
 const whoAmIEndpoint = require("./whoami/endpoint");
 const loginEndpoint = require('./login/endpoint');
 const logoutEndpoint = require("./logout/endpoint");
-const formSettingsettingsettingsApp = require('./formSettings/app');
+const formSettingsApp = require('./formSettings/app');
 const hutsApp = require('./huts/app');
 const { promisify } = require('util');
 const { Pool } = require('pg')
 const UsersRepository = require("./users/repository");
-const formSettingsRepository = require('./formSettings/repository');
+const FormSettingsRepository = require('./formSettings/repository');
 const HutsRepository = require('./huts/repository');
 const cors = require("cors");
 let cookieParser = require('cookie-parser');
@@ -45,7 +45,7 @@ module.exports = (config) => {
 
     const db = new Pool(config.postgres);
     let usersRepository = new UsersRepository(db);
-    let formSettingsRepository = new formSettingsRepository(db);
+    let formSettingsRepository = new FormSettingsRepository(db);
     let hutsRepository = new HutsRepository(db);
 
     app.post("/login", loginEndpoint(usersRepository));
