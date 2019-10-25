@@ -11,7 +11,7 @@ module.exports = function constructor(db) {
 async function updateForm(db, hutId, formConfigs) {
     try {
         await db.query(
-            'UPDATE formSettings SET data = $1 WHERE hutId = $2',
+            'UPDATE form_settings SET data = $1 WHERE hutId = $2',
             [formConfigs, hutId]
             );
     } catch(error) {
@@ -24,7 +24,7 @@ async function updateForm(db, hutId, formConfigs) {
 async function findForm(db, hutId) {
     let result;
     try {
-        result = await db.query(`SELECT * FROM formSettings
+        result = await db.query(`SELECT * FROM form_settings
             WHERE hutId = '${hutId}'`
         );
     } catch(error) {

@@ -1,6 +1,6 @@
 const tableExists = require("../repositoryUtils/tableExists");
 
-module.exports = async function ensureFormSettingsTableExists(db) {
+module.exports = async function ensureformSettingsTableExists(db) {
     if(await tableExists(db, "form_settings")) {
         return;
     }
@@ -14,6 +14,6 @@ module.exports = async function ensureFormSettingsTableExists(db) {
             )`
         );
     } catch(error) {
-        throw new Error("Something went wrong upon creating the formSettings table: ", error);
+        throw new Error("Something went wrong upon creating the form_settings table: ", error);
     }
 }
