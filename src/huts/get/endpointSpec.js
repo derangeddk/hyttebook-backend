@@ -59,7 +59,16 @@ describe("get endpoint", function() {
             city: "Havdrup",
             zipCode: "4622",
             email: "xyz@gmail.com",
-            phone: "74654010"
+            phone: "74654010",
+            price: {
+                monday: 1000,
+                tuesday: 1000,
+                wednesday: 1000,
+                thursday: 1000,
+                friday: 1500,
+                saturday: 1500,
+                sunday: 1500
+            }
         }
 
         let hutsRepository = {
