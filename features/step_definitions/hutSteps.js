@@ -43,6 +43,15 @@ Then('a hut should exist with the following information:', async function (dataT
     assert.deepStrictEqual(actualHutData.data, expectedHutData);
 });
 
+Then('the hut "xyz hut" has the following default prices:', async function (dataTable) {
+    let expectedPriceData = dataTable.hashes()[0];
+
+    let actualHutData = await this.client.get(`/huts/${this.hutId}`);
+    let actualPriceData = actualHutData.prices;
+
+    assert(actualPriceData != null, "prices is null");
+    assert.deepStrictEqual(actualPriceData, expectedPriceData);
+});
 
 Then('the hut should have a form', async function () {
     let actualForm = await this.client.get(`/forms/${this.hutId}`);
