@@ -21,10 +21,8 @@ module.exports = function constructor(db) {
     return {
         initialize: async () => {
             await ensurePricesTableExists(db);
-            //await ensureOffersConnectionsTableExists(db);
-            //await ensureSeasonsConnectionsTableExists
         },
-        create: (priceData /* hutId ?? */) => createPrice(db, priceData),
+        create: (priceData) => createPrice(db, priceData),
         find: (priceId) => findPrice(db, priceId),
     };
 };
@@ -41,9 +39,35 @@ async function ensurePricesTableExists(db) {
     } catch(error) {
         throw new Error("failed to create 'prices' table", error);
     }
-}; 
+};
 
-async function createPrice(db, priceData) {
+async function findPrice(db, priceId) {
+    let result;
+    try {
+        result = await db.query(
+            `SELECT * FROM prices
+                WHERE id = '${priceId}'`
+        )
+    } catch(error) {
+        throw new Error("tried to find a price", error);
+    }
+
+    let price = {
+        id: result.rows[0].id,
+        data: result.rows[0].data
+        // monday: result.rows[0].data.monday,
+        // tuesday: result.rows[0].data.tuesday,
+        // wednesday: result.rows[0].data.wednesday,
+        // thursday: result.rows[0].data.thursday,
+        // friday: result.rows[0].data.friday,
+        // saturday: result.rows[0].data.saturday,
+        // sunday: result.rows[0].data.sunday
+    }
+
+    return price;
+};
+
+async function createPrice(db, hutPrice) {
     let id = uuid.v4();
     let now = (new Date()).toISOString();
 
@@ -62,107 +86,13 @@ async function createPrice(db, priceData) {
                 {
                     createdAt: now,
                     updatedAt: now,
-                    ...priceData
+                    ...hutPrice
                 }
             ]
-        )
+        );
     } catch(error) {
-        throw new Error("tried to insert a new price into 'prices' tabel", error);
+        throw new Error("failed to insert a new price into 'prices' table");
     }
 
-    // CREATE PRICE CONNECTION ?? :
-    //
-    // let priceConnection = { 
-    //     userId,
-    //     hutId: id,
-    //     role: 1
-    // };
-
-    // try{
-    //     await createPriceConnection(db, priceConnection);
-    // } catch(error) {
-    //     throw new Error("failed to implicitly create priceConnection after creating a price and a form", error);
-    // }
-
-    return id;
+    return;
 };
-
-async function findPrice(db, priceId) {
-    let result;
-    try {
-        result = await db.query(
-            `SELECT * FROM prices
-                WHERE id = '${priceId}'`
-        )
-    } catch(error) {
-        throw new Error("tried to find a price", error);
-    }
-
-    let price = {
-        id: result.rows[0].id,
-        mon: result.rows[0].data.mon,
-        tue: result.rows[0].data.tue,
-        wed: result.rows[0].data.wed,
-        thu: result.rows[0].data.thu,
-        fri: result.rows[0].data.fri,
-        sat: result.rows[0].data.sat,
-        sun: result.rows[0].data.sun
-    }
-
-    return price;
-};
-
-
-
-
-
-// async function ensureOffersTableExists(db) {
-//     if(await tableExists(db)) {
-//         return;
-//     }
-//     try {
-//         await db.query("CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)");
-//     } catch(error) {
-//         throw new Error("failed while trying to create 'huts' table", error);
-//     }
-// };
-
-// async function ensureSeasonsTableExists(db) {
-//     if(await tableExists(db)) {
-//         return;
-//     }
-//     try {
-//         await db.query("CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)");
-//     } catch(error) {
-//         throw new Error("failed while trying to create 'huts' table", error);
-//     }
-// };
-
-
-// async function createRoleConnection(db, roleConnection) {
-//     let { userId, hutId, role } = roleConnection;
-
-//     try {
-//         await db.query(
-//             `INSERT INTO role_connections(
-//                 user_id,
-//                 hut_id,
-//                 role
-//             )
-//             VALUES(
-//                 $1::uuid,
-//                 $2::uuid,
-//                 $3::integer
-//             )`,
-//             [
-//                 userId,
-//                 hutId,
-//                 role
-//             ]
-//         );
-//     } catch(error) {
-//         throw new Error("failed to insert roleConnection into role_connections");
-//     }
-
-//     return;
-// };
