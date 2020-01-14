@@ -12,7 +12,7 @@
     "test": "jasmine",
     "dev": "nodemon -L --delay 4 src/start",
     "con-test": "nodemon --exec jasmine || true",
-    "test-cuke": "cucumber-js"
+    "test-cuke": "nodemon --exec cucumber-js || true"
   },
   "repository": {
     "type": "git",

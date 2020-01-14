@@ -7,6 +7,7 @@ module.exports = function constructor(db) {
         initialize: async () => await ensureUsersTableExists(db),
         create: (username, password, email, fullName) => createUser(db, username, password, email, fullName),
         authenticate: (username, password) =>  authenticate(db, username, password),
+        find: (userId) => findById(db, userId)
     };
 };
 
@@ -138,6 +139,34 @@ async function authenticate(db, email, password) {
     let user = {
         id: result.rows[0].id,
         username: result.rows[0].username
+    };
+
+    return user;
+}
+
+async function findById(db, userId) {
+    let queryResult;
+    try {
+        queryResult = await db.query(
+            `SELECT username FROM users
+            WHERE id = $1::uuid`,
+            [
+                userId
+            ]
+        )
+    } catch(error) {
+        console.error("error while trying to find user by id: " ,error);
+        throw new Error("users repository failed to find a user by id: ", error);
+    }
+
+    if(queryResult.rows.length != 1) {
+        let error = new Error("Couldn't find a user with that id");
+        error.code = "NON-EXISTENT";
+        throw error;
+    }
+
+    let user = {
+        username: queryResult.rows[0].username
     };
 
     return user;

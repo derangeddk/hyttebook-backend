@@ -18,7 +18,7 @@ describe("list huts endpoint", function() {
         }
 
         let hutsRepository = {
-            findAllByUserId: jasmine.createSpy("hutsRespository.findAllByUserId").and.callFake(async () => {
+            findByUserId: jasmine.createSpy("hutsRespository.findByUserId").and.callFake(async () => {
                 throw new Error("huts repository exploded");
             })
         };
@@ -65,7 +65,7 @@ describe("list huts endpoint", function() {
         ];
 
         let hutsRepository = {
-            findAllByUserId: jasmine.createSpy("hutsRespository.findAllByUserId").and.callFake(async () => {
+            findByUserId: jasmine.createSpy("hutsRespository.findByUserId").and.callFake(async () => {
                 return huts;
             })
         };
@@ -81,7 +81,7 @@ describe("list huts endpoint", function() {
 
         expect(actualError).toBe(null);
         expect(res.send).toHaveBeenCalledTimes(1);
-        expect(res.send).toHaveBeenCalledWith({ huts });
+        expect(res.send).toHaveBeenCalledWith(huts);
     });
 
     it("succeeds if no huts are found for the user", async function() {
@@ -104,9 +104,7 @@ describe("list huts endpoint", function() {
         let huts = [];
 
         let hutsRepository = {
-            findAllByUserId: jasmine.createSpy("hutsRespository.findAllByUserId").and.callFake(async () => {
-                return huts;
-            })
+            findByUserId: jasmine.createSpy("hutsRespository.findByUserId").and.callFake(async () => {})
         };
 
         let endpoint = listEndpoint(hutsRepository);

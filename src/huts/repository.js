@@ -10,6 +10,7 @@ module.exports = function constructor(db) {
         },
         create: (hut, userId) => createHutWithImplicitFormAndAdmin(db, hut, userId),
         find: (hutId) => findHut(db, hutId),
+        findByUserId: (userId) => findHutsByUserId(db, userId),
     };
 };
 
@@ -100,6 +101,28 @@ async function findHut(db, hutId) {
 };
 
 
+async function findHutsByUserId(db, userId) {
+    let queryResult;
+
+    try {
+        queryResult = await db.query(
+            `SELECT role_connections.hut_id, huts.name FROM huts
+                JOIN role_connections ON huts.id = role_connections.hut_id
+                WHERE role_connections.user_id = '${userId}'`
+        );
+    } catch(error) {
+        throw new Error("tried to find the users huts");
+    }
+
+    let huts = queryResult.rows;
+
+    if(huts.length === 0) {
+        return;
+    }
+
+    return huts;
+}
+
 async function createHutWithImplicitFormAndAdmin(db, hut, userId) {
     let hutId = uuid.v4();
 
@@ -121,14 +144,17 @@ async function createHut(db, hut, hutId) {
         await db.query(
             `INSERT INTO huts(
                 id,
+                name,
                 data
             )
             VALUES(
                 $1::uuid,
-                $2::json
+                $2::text,
+                $3::json
             )`,
             [
                 hutId,
+                hut.hutName,
                 {
                     createdAt: now,
                     updatedAt: now,
@@ -244,6 +270,7 @@ async function ensureHutsTableExists(db) {
         await db.query(
             `CREATE TABLE huts(
                 id uuid UNIQUE PRIMARY KEY,
+                name text NOT NULL,
                 data json NOT NULL
             )`
         );

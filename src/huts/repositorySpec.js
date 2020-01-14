@@ -30,6 +30,7 @@ describe("huts repository" , function() {
                 initialize: jasmine.any(Function),
                 create: jasmine.any(Function),
                 find: jasmine.any(Function),
+                findByUserId:jasmine.any(Function)
             });
         });
 
@@ -106,6 +107,7 @@ describe("huts repository" , function() {
             expect(db.query).toHaveBeenCalledWith(
                 `CREATE TABLE huts(
                     id uuid UNIQUE PRIMARY KEY,
+                    name text NOT NULL,
                     data json NOT NULL
                 )`
             );
@@ -141,14 +143,17 @@ describe("huts repository" , function() {
             expect(actualError).toBe(null);
             expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
                 id,
+                name,
                 data
             )
             VALUES(
                 $1::uuid,
-                $2::json
+                $2::text,
+                $3::json
             )`,
             [
                 id,
+                hutData.hutName,
                 {
                     createdAt: jasmine.any(String),
                     updatedAt: jasmine.any(String),
@@ -194,14 +199,17 @@ describe("huts repository" , function() {
             expect(actualError).not.toBe(null);
             expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
                 id,
+                name,
                 data
             )
             VALUES(
                 $1::uuid,
-                $2::json
+                $2::text,
+                $3::json
             )`,
             [
                 jasmine.any(String),
+                hutData.hutName,
                 {
                     createdAt: jasmine.any(String),
                     updatedAt: jasmine.any(String),
@@ -247,14 +255,17 @@ describe("huts repository" , function() {
             expect(actualError).not.toBe(null);
             expect(db.query).toHaveBeenCalledWith(`INSERT INTO huts(
                 id,
+                name,
                 data
             )
             VALUES(
                 $1::uuid,
-                $2::json
+                $2::text,
+                $3::json
             )`,
             [
                 jasmine.any(String),
+                hutData.hutName,
                 {
                     createdAt: jasmine.any(String),
                     updatedAt: jasmine.any(String),
@@ -327,14 +338,17 @@ describe("huts repository" , function() {
             expect(db.query).toHaveBeenCalledWith(
             `INSERT INTO huts(
                 id,
+                name,
                 data
             )
             VALUES(
                 $1::uuid,
-                $2::json
+                $2::text,
+                $3::json
             )`,
             [
                 hutId,
+                hutData.hutName,
                 {
                     createdAt: jasmine.any(String),
                     updatedAt: jasmine.any(String),
@@ -536,6 +550,69 @@ describe("huts repository" , function() {
                 WHERE id = '${hutId}'`
             );
             expect(actualError).toEqual(null);
+        });
+    });
+
+    describe("findHutsByUserId function", function() {
+        it("fails if database explodes", async function() {
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async (query) => {
+                    if(query.startsWith("SELECT role_connections.hut_id, huts.name FROM huts")) {
+                        throw new Error("database exploded");
+                    }
+                })
+            };
+
+            let hutsRepository = new HutsRepository(db);
+
+            let userId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
+
+            let huts;
+
+            let actualError = null;
+            try {
+                huts = await hutsRepository.findByUserId(userId);
+            } catch(error) {
+                actualError = error;
+            }
+
+            expect(actualError).not.toBe(null);
+            expect(db.query).toHaveBeenCalledWith(
+                `SELECT role_connections.hut_id, huts.name FROM huts
+                JOIN role_connections ON huts.id = role_connections.hut_id
+                WHERE role_connections.user_id = '${userId}'`
+            );
+        });
+
+        it("succeeds if the user doesn't have any huts", async function() {
+            let queryResult = {
+                rows: []
+            };
+
+            let db = {
+                query: jasmine.createSpy("db.query").and.callFake(async () => queryResult)
+            };
+
+            let hutsRepository = new HutsRepository(db);
+
+            let userId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
+
+            let huts;
+            let actualError = null;
+            try {
+                huts = await hutsRepository.findByUserId(userId);
+            } catch(error) {
+                console.log("######", error);
+                actualError = error;
+            }
+
+            expect(actualError).toBe(null);
+            expect(db.query).toHaveBeenCalledWith(
+                `SELECT role_connections.hut_id, huts.name FROM huts
+                    JOIN role_connections ON huts.id = role_connections.hut_id
+                    WHERE role_connections.user_id = '${userId}'`
+            );
+            expect(huts).toEqual(undefined);
         });
     });
 });
