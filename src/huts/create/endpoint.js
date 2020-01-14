@@ -6,7 +6,8 @@ module.exports = (hutsRepository) => async (req, res) => {
         city,
         zipCode,
         email,
-        phone
+        phone,
+        price
     } = req.body;
 
     let userId = req.auth.user_id;
@@ -22,6 +23,7 @@ module.exports = (hutsRepository) => async (req, res) => {
     validateZipCode(zipCode, requestErrors);
     validateEmail(email, requestErrors);
     validatePhone(phone, requestErrors);
+    validatePrice(price, requestErrors);
 
     if(requestErrors.errorCount) {
         res.status(400).send({requestErrors});
@@ -39,6 +41,52 @@ module.exports = (hutsRepository) => async (req, res) => {
 
     res.send(result);
 };
+
+function validatePrice(price, requestErrors) {  // TODO check up on this
+    if(!price) {
+        requestErrors.price = {
+            code: "MISSING",
+            da: "Indtast venligst pris"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+    if(!hasValidPriceProp(price, "monday", requestErrors)) return;
+    if(!hasValidPriceProp(price, "tuesday", requestErrors)) return;
+    if(!hasValidPriceProp(price, "wednesday", requestErrors)) return;
+    if(!hasValidPriceProp(price, "thursday", requestErrors)) return;
+    if(!hasValidPriceProp(price, "friday", requestErrors)) return;
+    if(!hasValidPriceProp(price, "saturday", requestErrors)) return;
+    if(!hasValidPriceProp(price, "sunday", requestErrors)) return;
+}
+
+function hasValidPriceProp(price, prop, requestErrors) {  // TODO check up on this
+    if(!price[prop]) {
+        requestErrors.price = {
+            code: "MISSING",
+            da: "Indtast venligst pris for " + prop
+        };
+        requestErrors.errorCount++;
+        return false;
+    }
+    if(typeof price[prop] !== 'string') {
+        requestErrors.price = {
+            code: "TYPE",
+            da: "Priser skal være en tekst-streng: " + prop
+        };
+        requestErrors.errorCount++;
+        return false;
+    }
+    if(price[prop] < 0) {
+        requestErrors.price = {
+            code: "NEGATIV",
+            da: "Indtast venligt en positiv pris for " + prop
+        };
+        requestErrors.errorCount++;
+        return false;
+    }
+    return true;
+}
 
 function validateHutName(hutName, requestErrors) {
     if(!hutName) {
