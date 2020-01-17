@@ -23,7 +23,7 @@ module.exports = function constructor(db) {
             await ensurePricesTableExists(db);
         },
         create: (priceData) => createPrice(db, priceData),
-        find: (priceId) => findPrice(db, priceId),
+        find: (priceId) => findHutDayPrices(db, priceId),
     };
 };
 
@@ -41,7 +41,7 @@ async function ensurePricesTableExists(db) {
     }
 };
 
-async function findPrice(db, priceId) {
+async function findHutDayPrices(db, priceId) {
     let result;
     try {
         result = await db.query(
@@ -52,22 +52,23 @@ async function findPrice(db, priceId) {
         throw new Error("tried to find a price", error);
     }
 
-    let price = {
+    let dayPrices = {
         id: result.rows[0].id,
-        data: result.rows[0].data
-        // monday: result.rows[0].data.monday,
-        // tuesday: result.rows[0].data.tuesday,
-        // wednesday: result.rows[0].data.wednesday,
-        // thursday: result.rows[0].data.thursday,
-        // friday: result.rows[0].data.friday,
-        // saturday: result.rows[0].data.saturday,
-        // sunday: result.rows[0].data.sunday
+        data: {
+            monday: result.rows[0].data.monday,
+            tuesday: result.rows[0].data.tuesday,
+            wednesday: result.rows[0].data.wednesday,
+            thursday: result.rows[0].data.thursday,
+            friday: result.rows[0].data.friday,
+            saturday: result.rows[0].data.saturday,
+            sunday: result.rows[0].data.sunday
+        }
     }
 
-    return price;
+    return dayPrices;
 };
 
-async function createPrice(db, hutPrice) {
+async function createPrice(db, priceData) {
     let id = uuid.v4();
     let now = (new Date()).toISOString();
 
@@ -86,13 +87,13 @@ async function createPrice(db, hutPrice) {
                 {
                     createdAt: now,
                     updatedAt: now,
-                    ...hutPrice
+                    ...priceData
                 }
             ]
         );
     } catch(error) {
         throw new Error("failed to insert a new price into 'prices' table");
     }
-
-    return;
+    
+    return id;
 };
