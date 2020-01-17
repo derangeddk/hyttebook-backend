@@ -7,7 +7,7 @@ module.exports = (hutsRepository) => async (req, res) => {
         zipCode,
         email,
         phone,
-        price
+        dayPrices
     } = req.body;
 
     let userId = req.auth.user_id;
@@ -23,7 +23,7 @@ module.exports = (hutsRepository) => async (req, res) => {
     validateZipCode(zipCode, requestErrors);
     validateEmail(email, requestErrors);
     validatePhone(phone, requestErrors);
-    validatePrice(price, requestErrors);
+    validatePrice(dayPrices, requestErrors);
 
     if(requestErrors.errorCount) {
         res.status(400).send({requestErrors});
@@ -42,45 +42,45 @@ module.exports = (hutsRepository) => async (req, res) => {
     res.send(result);
 };
 
-function validatePrice(price, requestErrors) {  // TODO check up on this
-    if(!price) {
-        requestErrors.price = {
+function validatePrice(prices, requestErrors) {  // TODO check up on this
+    if(!prices) {
+        requestErrors.dayPrices = {
             code: "MISSING",
-            da: "Indtast venligst pris"
+            da: "Indtast venligst priser"
         };
         requestErrors.errorCount++;
         return;
     }
-    if(!hasValidPriceProp(price, "monday", requestErrors)) return;
-    if(!hasValidPriceProp(price, "tuesday", requestErrors)) return;
-    if(!hasValidPriceProp(price, "wednesday", requestErrors)) return;
-    if(!hasValidPriceProp(price, "thursday", requestErrors)) return;
-    if(!hasValidPriceProp(price, "friday", requestErrors)) return;
-    if(!hasValidPriceProp(price, "saturday", requestErrors)) return;
-    if(!hasValidPriceProp(price, "sunday", requestErrors)) return;
+    if(!hasValidPriceProp(prices["monday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["tuesday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["wednesday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["thursday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["friday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["saturday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["sunday"], requestErrors)) return;
 }
 
-function hasValidPriceProp(price, prop, requestErrors) {  // TODO check up on this
-    if(!price[prop]) {
-        requestErrors.price = {
+function hasValidPriceProp(dayPrice, requestErrors) {  // TODO check up on this
+    if(!dayPrice) {
+        requestErrors.dayPrices = {
             code: "MISSING",
-            da: "Indtast venligst pris for " + prop
+            da: "Indtast venligst pris for " + dayPrice
         };
         requestErrors.errorCount++;
         return false;
     }
-    if(typeof price[prop] !== 'string') {
-        requestErrors.price = {
+    if(typeof dayPrice !== 'number') {
+        requestErrors.dayPrices = {
             code: "TYPE",
-            da: "Priser skal være en tekst-streng: " + prop
+            da: "Priser skal være en tal: " + dayPrice
         };
         requestErrors.errorCount++;
         return false;
     }
-    if(price[prop] < 0) {
-        requestErrors.price = {
+    if(dayPrice < 0) {
+        requestErrors.dayPrices = {
             code: "NEGATIV",
-            da: "Indtast venligt en positiv pris for " + prop
+            da: "Indtast venligt en positiv pris for " + dayPrice
         };
         requestErrors.errorCount++;
         return false;
