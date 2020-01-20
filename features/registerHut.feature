@@ -8,8 +8,8 @@ Feature: Register hut
         | xyz hut | Kildemarken | 96           | Havdrup  | 4622    | xyz@mail.com | 74654010 | 1, 2, 3, 4, 5, 6, 7 |
         Then I should receive a response containing an id
         And a hut should exist with the following information:
-        | id                | hutName | street      | streetNumber | city     | zipCode | email        | phone    | dayPrices   |
-        | "the return uuid" | xyz hut | Kildemarken | 96           | Havdrup  | 4622    | xyz@mail.com | 74654010 | some object |
+        | id                | hutName | street      | streetNumber | city     | zipCode | email        | phone    |
+        | "the return uuid" | xyz hut | Kildemarken | 96           | Havdrup  | 4622    | xyz@mail.com | 74654010 |
         And the hut "xyz hut" has the following default prices:
         | monday | tuesday | wednesday | thursday | friday | saturday | sunday |
         | 1      | 2       | 3         | 4        | 5      | 6        | 7      |

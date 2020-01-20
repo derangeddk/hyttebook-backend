@@ -38,17 +38,18 @@ Then('a hut should exist with the following information:', async function (dataT
     let expectedHutData = dataTable.hashes()[0];
     expectedHutData.id = this.hutId;
 
-    let actualHutData = await this.client.get(`/huts/${this.hutId}`);
-    actualHutData.data.dayPrices = "some object";   // TODO REMOVE HACK
+    let response = await this.client.get(`/huts/${this.hutId}`);
+    let actualHutData = {};
+    Object.keys(expectedHutData).forEach(key => actualHutData[key] = response.data[key]);
 
-    assert.deepStrictEqual(actualHutData.data, expectedHutData);
-}); 
+    assert.deepStrictEqual(actualHutData, expectedHutData);
+});
 
 Then('the hut "xyz hut" has the following default prices:', async function (dataTable) {
     let expectedPriceData = dataTable.hashes()[0];
 
-    let hutResponse = await this.client.get(`/huts/${this.hutId}`);
-    let actualPriceData = hutResponse.data.dayPrices;
+    let response = await this.client.get(`/huts/${this.hutId}`);
+    let actualPriceData = response.data.dayPrices;
 
     assert(actualPriceData != null, "price data is null");
     assert.deepEqual(actualPriceData, expectedPriceData); // TODO DeepStrictEqual doesn't work, because expectedPriceData represents the numbers as strings???
@@ -67,4 +68,4 @@ Then('I should be admin of a hut named {string}', async function (string) {
 
     assert.deepStrictEqual(string, huts[0].name);
     assert.deepStrictEqual(this.hutId, huts[0].hut_id);
-  });
+});
