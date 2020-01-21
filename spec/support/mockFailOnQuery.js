@@ -1,6 +1,6 @@
 module.exports = function mockFailOnQuery(db, querysToFailOn) {
     if (!querysToFailOn) {
-        db.query= jasmine.createSpy("db.query").and.callFake(async () => {
+        db.query.and.callFake(async () => {
             throw new Error("postgres exploded")
         });
     }
@@ -15,7 +15,7 @@ module.exports = function mockFailOnQuery(db, querysToFailOn) {
         return mockFailOnQuery(db, obj);
     }
     
-    db.query = jasmine.createSpy("db.query").and.callFake(async (query) => {
+    db.query.and.callFake(async (query) => {
         Object.keys(querysToFailOn).forEach(q => { 
             if(query.startsWith(q)) {
                 throw querysToFailOn[q];
