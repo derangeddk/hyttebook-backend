@@ -251,9 +251,8 @@ describe("huts repository" , function() {
                 ]
             };
 
-            let foundHut;
             let actualError = await getErrorsFromRunningFunction( async () => {
-                foundHut = await hutsRepository.find(hutId)
+                await hutsRepository.find(hutId)
             });
 
             expect(db.query).toHaveBeenCalledWith(`SELECT * FROM huts WHERE id = '${hutId}'`);
