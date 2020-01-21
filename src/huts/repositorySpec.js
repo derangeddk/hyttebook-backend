@@ -2,39 +2,15 @@ const HutsRepository = require("./repository");
 const { sqlEquality } = require("../../spec/support/customEqualityTesters");
 
 describe("huts repository" , function() {
-    let actualError, db;
-
-    let mockDb = (callback) => {
-        return {
-            query: jasmine.createSpy("db.query").and.callFake(callback)
-        }
-    }
-
-    let mockFailOnQuery = (queryToFailOn, errormsg) => { 
-        return {
-            query: jasmine.createSpy("db.query").and.callFake(async (query) => {
-                if(query.startsWith(queryToFailOn)) {
-                    throw new Error(errormsg);
-                }
-            })
-        }
-    }
-
-    let test = async (runnable) => {
-        try {
-            await runnable();
-        } catch(error) {
-            actualError = error;
-        }
-    }
+    let actualError;
 
     beforeEach(function () {
         jasmine.addCustomEqualityTester(sqlEquality); 
         actualError = null;
-        db = null;
     });
 
     describe("constructor function", function() {
+        let db;
         beforeEach(function() {
             db = {
                 query: async (query) => {
@@ -233,15 +209,18 @@ describe("huts repository" , function() {
     });
 
     describe("findHut function", function() {
-        let hutId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
+        let hutId;
+        beforeEach(function() {
+            hutId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
+        });
 
         it("fails if postgres throws an error while looking for the hut", async function() {
             let db = mockDb(async () => {
                 throw new Error("postgres exploded while looking for a hut")
             });
             let hutsRepository = new HutsRepository(db);
+            
             let hut;
-
             await test( async () => hut = await hutsRepository.find(hutId));
 
             expect(db.query).toHaveBeenCalledWith(`SELECT * FROM huts WHERE id = '${hutId}'`);
@@ -278,12 +257,15 @@ describe("huts repository" , function() {
     });
 
     describe("findHutsByUserId function", function() {
-        let userId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
-        let expectedQuery = function(userId) { 
+        let userId; 
+        let expectedQuery = (userId) => { 
             return `SELECT role_connections.hut_id, huts.name FROM huts
             JOIN role_connections ON huts.id = role_connections.hut_id
             WHERE role_connections.user_id = '${userId}'`
-        }
+        };
+        beforeEach(function() {
+            userId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
+        })
 
         it("fails if database explodes", async function() {
             let db = mockFailOnQuery("SELECT role_connections.hut_id, huts.name FROM huts", "database exploded");
@@ -311,4 +293,28 @@ describe("huts repository" , function() {
             expect(huts).toEqual(undefined);
         });
     });
+
+    let mockDb = (callback) => {
+        return {
+            query: jasmine.createSpy("db.query").and.callFake(callback)
+        }
+    }
+
+    let mockFailOnQuery = (queryToFailOn, errormsg) => { 
+        return {
+            query: jasmine.createSpy("db.query").and.callFake(async (query) => {
+                if(query.startsWith(queryToFailOn)) {
+                    throw new Error(errormsg);
+                }
+            })
+        }
+    }
+
+    let test = async (runnable) => {
+        try {
+            await runnable();
+        } catch(error) {
+            actualError = error;
+        }
+    }
 });
