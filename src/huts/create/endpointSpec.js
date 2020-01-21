@@ -135,10 +135,6 @@ describe("'create' endpoint for huts" , function() {
 
     theoretically.it("fails if %s has an empty object", hutPropertiesToBeTested, async function(emptyProperty) {
         req.body[emptyProperty] = { };
-
-        let requestErrors = {
-            errorCount: 1,
-        };
         
         requestErrors[emptyProperty] = {
             code: jasmine.any(String),
@@ -162,9 +158,6 @@ describe("'create' endpoint for huts" , function() {
 
     theoretically.it("fails if price property %s is missing",[ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"], async function(priceProperty) {
         delete req.body.dayPrices[priceProperty];
-        let requestErrors = {
-            errorCount: 1,
-        };
         
         requestErrors.dayPrices = {
             code: jasmine.any(String),
@@ -186,9 +179,6 @@ describe("'create' endpoint for huts" , function() {
 
     theoretically.it("fails if price property %s is empty",[ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"], async function(priceProperty) {
         req.body.dayPrices[priceProperty] = "";
-        let requestErrors = {
-            errorCount: 1,
-        };
         
         requestErrors.dayPrices = {
             code: jasmine.any(String),
@@ -210,9 +200,6 @@ describe("'create' endpoint for huts" , function() {
 
     theoretically.it("fails if price property %s is negative",[ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"], async function(priceProperty) {
         req.body.dayPrices[priceProperty] = -priceProperty;
-        let requestErrors = {
-            errorCount: 1,
-        };
         
         requestErrors.dayPrices = {
             code: jasmine.any(String),
