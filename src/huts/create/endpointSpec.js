@@ -119,7 +119,7 @@ describe("'create' endpoint for huts" , function() {
 
         endpoint = createEndpoint(hutsRepository);
 
-        try {
+        try { 
             await endpoint(req, res);
         } catch(error) {
             actualError = error;
@@ -160,75 +160,75 @@ describe("'create' endpoint for huts" , function() {
 
     /* TESTING PRICE PROPERTIES */
 
-//     theoretically.it("fails if price property %s is missing",[ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"], async function(priceProperty) {
-//         delete req.body.price[priceProperty];
-//         let requestErrors = {
-//             errorCount: 1,
-//         };
+    theoretically.it("fails if price property %s is missing",[ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"], async function(priceProperty) {
+        delete req.body.dayPrices[priceProperty];
+        let requestErrors = {
+            errorCount: 1,
+        };
         
-//         requestErrors[priceProperty] = {
-//             code: jasmine.any(String),
-//             da: jasmine.any(String)
-//         };
+        requestErrors.dayPrices = {
+            code: jasmine.any(String),
+            da: jasmine.any(String)
+        };
         
-//         try {
-//             await endpoint(req, res);
-//         } catch(error) {
-//             actualError = error;
-//         }
+        try {
+            await endpoint(req, res);
+        } catch(error) {
+            actualError = error;
+        }
 
-//         expect(actualError).toBe(null);
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(res.status).toHaveBeenCalledTimes(1);
-//         expect(res.send).toHaveBeenCalledTimes(1);
-//         expect(res.send).toHaveBeenCalledWith({requestErrors}); //random error
-//     });
+        expect(actualError).toBe(null);
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledWith({requestErrors}); //random error
+    });
 
-//     theoretically.it("fails if price property %s is empty",[ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"], async function(priceProperty) {
-//         req.body.price[priceProperty] = "";
-//         let requestErrors = {
-//             errorCount: 1,
-//         };
+    theoretically.it("fails if price property %s is empty",[ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"], async function(priceProperty) {
+        req.body.dayPrices[priceProperty] = "";
+        let requestErrors = {
+            errorCount: 1,
+        };
         
-//         requestErrors[priceProperty] = {
-//             code: jasmine.any(String),
-//             da: jasmine.any(String)
-//         };
+        requestErrors.dayPrices = {
+            code: jasmine.any(String),
+            da: jasmine.any(String)
+        };
         
-//         try {
-//             await endpoint(req, res);
-//         } catch(error) {
-//             actualError = error;
-//         }
+        try {
+            await endpoint(req, res);
+        } catch(error) {
+            actualError = error;
+        }
 
-//         expect(actualError).toBe(null);
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(res.status).toHaveBeenCalledTimes(1);
-//         expect(res.send).toHaveBeenCalledTimes(1);
-//         expect(res.send).toHaveBeenCalledWith({requestErrors});
-//     });
+        expect(actualError).toBe(null);
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledWith({requestErrors});
+    });
 
-//     theoretically.it("fails if price property %s is negative",[ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"], async function(priceProperty) {
-//         req.body.price[priceProperty] = -priceProperty;
-//         let requestErrors = {
-//             errorCount: 1,
-//         };
+    theoretically.it("fails if price property %s is negative",[ "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"], async function(priceProperty) {
+        req.body.dayPrices[priceProperty] = -priceProperty;
+        let requestErrors = {
+            errorCount: 1,
+        };
         
-//         requestErrors[priceProperty] = {
-//             code: jasmine.any(String),
-//             da: jasmine.any(String)
-//         };
+        requestErrors.dayPrices = {
+            code: jasmine.any(String),
+            da: jasmine.any(String)
+        };
         
-//         try {
-//             await endpoint(req, res);
-//         } catch(error) {
-//             actualError = error;
-//         }
+        try {
+            await endpoint(req, res);
+        } catch(error) {
+            actualError = error;
+        }
 
-//         expect(actualError).toBe(null);
-//         expect(res.status).toHaveBeenCalledWith(400);
-//         expect(res.status).toHaveBeenCalledTimes(1);
-//         expect(res.send).toHaveBeenCalledTimes(1);
-//         expect(res.send).toHaveBeenCalledWith({requestErrors});
-//     });
+        expect(actualError).toBe(null);
+        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledTimes(1);
+        expect(res.send).toHaveBeenCalledWith({requestErrors});
+    });
 });
