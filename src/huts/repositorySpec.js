@@ -159,7 +159,6 @@ describe("huts repository" , function() {
 
         it("fails if formsRepo explodes upon inserting a form after having created a hut", async function() {
             formsRepo.create.and.callFake( async () => {
-                console.log("LOG")
                 throw new Error("failed to insert form")
             });
             let hutsRepository = new HutsRepository(db, formsRepo)
