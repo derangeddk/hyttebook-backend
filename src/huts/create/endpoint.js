@@ -42,7 +42,7 @@ module.exports = (hutsRepository) => async (req, res) => {
     res.send(result);
 };
 
-function validatePrice(prices, requestErrors) {  // TODO check up on this
+function validatePrice(prices, requestErrors) {
     if(!prices) {
         requestErrors.dayPrices = {
             code: "MISSING",
@@ -60,7 +60,7 @@ function validatePrice(prices, requestErrors) {  // TODO check up on this
     if(!hasValidPriceProp(prices["sunday"], requestErrors)) return;
 }
 
-function hasValidPriceProp(dayPrice, requestErrors) {  // TODO check up on this
+function hasValidPriceProp(dayPrice, requestErrors) {
     if(!dayPrice) {
         requestErrors.dayPrices = {
             code: "MISSING",
@@ -167,7 +167,7 @@ function validateCity(city, requestErrors) {
         requestErrors.errorCount++;
         return;
     }
-        
+
     return city.trim();
 }
 
