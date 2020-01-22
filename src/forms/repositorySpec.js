@@ -70,7 +70,7 @@ describe("forms repository", function() {
         });
     })
     
-    describe("findForm function", function() {
+    describe("find function", function() {
         it("fails if postgres throws an error while trying to find a form", async function() {
             mockFailOnQuery(db, "SELECT * FROM forms");
             let formsRepository = new FormsRepository(db);
