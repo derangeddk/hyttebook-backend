@@ -1,6 +1,6 @@
 const { When, Then } = require("cucumber");
 const assert = require("assert");
-const { isValidUUID } = require("../../src/util.js");
+const { isValidUuid } = require("../../src/util.js");
 
 When('I register a hut with the following information:', async function (dataTable) {
     let {
@@ -23,7 +23,7 @@ When('I register a hut with the following information:', async function (dataTab
 
 Then('I should receive a response containing an id', function () {
     assert(this.hutId != null, "hut id is null");
-    assert(isValidUUID(this.hutId), "hut id is not a valid uuid");
+    assert(isValidUuid(this.hutId), "hut id is not a valid uuid");
 });
 
 Then('a hut should exist with the following information:', async function (dataTable) {
