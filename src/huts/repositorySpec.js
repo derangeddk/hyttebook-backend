@@ -1,6 +1,7 @@
 const HutsRepository = require("./repository");
 const { sqlEquality } = require("../../spec/support/customEqualityTesters");
 const mockFailOnQuery = require("../../spec/support/mockFailOnQuery");
+const getErrorsFromRunningFunction = require("../../spec/support/getErrorsFromRunningFunction");
 
 describe("huts repository" , function() {
     let db, formsRepo;
@@ -300,14 +301,4 @@ describe("huts repository" , function() {
             expect(huts).toEqual(undefined);
         });
     }); 
-
-    let getErrorsFromRunningFunction = async (runnable) => { 
-        let actualError = null;
-        try {
-            await runnable();
-        } catch(error) {
-            actualError = error;
-        }
-        return actualError;
-    }
 });
