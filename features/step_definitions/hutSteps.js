@@ -1,6 +1,6 @@
 const { When, Then } = require("cucumber");
 const assert = require("assert");
-const {isValidUUID} = require("../../src/util.js");
+const { isValidUUID } = require("../../src/util.js");
 
 When('I register a hut with the following information:', async function (dataTable) {
     let {
@@ -14,16 +14,8 @@ When('I register a hut with the following information:', async function (dataTab
         dayPrices
     } = dataTable.hashes()[0];
 
-    let dayPricesCleaned = dayPrices.split(',').map(p => parseInt(p.trim()));
-    let priceObject = {
-        monday: dayPricesCleaned[0],
-        tuesday: dayPricesCleaned[1],
-        wednesday: dayPricesCleaned[2],
-        thursday: dayPricesCleaned[3],
-        friday: dayPricesCleaned[4],
-        saturday: dayPricesCleaned[5],
-        sunday: dayPricesCleaned[6]
-    };
+    let [ monday, tuesday, wednesday, thursday, friday, saturday, sunday ] = dayPrices.split(',').map(p => parseInt(p.trim()));
+    let priceObject = { monday, tuesday, wednesday, thursday, friday, saturday, sunday };
 
     let hutResponse = await this.client.post("/huts", { hutName, street, streetNumber, city, zipCode, email, phone, dayPrices: priceObject });
     this.hutId = hutResponse.data;
