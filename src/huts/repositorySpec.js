@@ -45,17 +45,17 @@ describe("huts repository" , function() {
             expect(actualError).not.toBe(null);
         });
 
-        it("explodes if the database explodes while creating the huts table, if the table does not already exist", async function() {
-            mockFailOnQuery(db, [
-                "SELECT 'public.huts'::regclass", 
-                "CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)"
-            ]);
-            
+        fit("explodes if the database explodes while creating the huts table, if the table does not already exist", async function() {
+            mockFailOnQuery(db, {
+                "SELECT 'public.huts'::regclass": { message: `relation "public.huts" does not exist` },
+                "CREATE TABLE huts": new Error("failed while trying to create 'huts' table")
+            });
             let hutsRepository = new HutsRepository(db);
             
             let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize() );
 
             expect(actualError).toEqual(jasmine.any(Error));
+            expect(actualError.message).toEqual("failed while trying to create 'huts' table");
             expect(db.query.calls.allArgs(["SELECT 'public.huts'::regclass"],['CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']));
             expect(db.query.calls.count(2));
         });
