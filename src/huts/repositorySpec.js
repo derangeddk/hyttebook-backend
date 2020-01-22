@@ -13,12 +13,15 @@ describe("huts repository" , function() {
     });
 
     describe("constructor function", function() {
+        let expectedSelectTableQuery, expectedCreateTableQuery;
 
         beforeEach(function() {
             db.query.and.callFake(async (query) => {
                 if(query == "SELECT 'public.huts'::regclass") return;
                 if(query == "SELECT 'public.role_connections'::regclass") return;
             })
+            expectedSelectTableQuery = "SELECT 'public.huts'::regclass";
+            expectedCreateTableQuery = "CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, name text NOT NULL, data json NOT NULL)";
         });
 
         it("creates a repository if the huts and role_connections table already exists",async function() {
@@ -41,7 +44,7 @@ describe("huts repository" , function() {
 
             let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize() );
 
-            expect(db.query).toHaveBeenCalledWith("SELECT 'public.huts'::regclass");
+            expect(db.query).toHaveBeenCalledWith(expectedSelectTableQuery);
             expect(actualError).not.toBe(null);
         });
 
@@ -56,7 +59,7 @@ describe("huts repository" , function() {
 
             expect(actualError).toEqual(jasmine.any(Error));
             expect(actualError.message).toEqual("failed while trying to create 'huts' table");
-            expect(db.query.calls.allArgs()).toEqual([["SELECT 'public.huts'::regclass"], ["CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, name text NOT NULL, data json NOT NULL)"]]);
+            expect(db.query.calls.allArgs()).toEqual([[expectedSelectTableQuery], [expectedCreateTableQuery]]);
             expect(db.query.calls.count(2));
         });
 
@@ -70,13 +73,7 @@ describe("huts repository" , function() {
 
             expect(actualError).toBe(null);
             expect(db.query.calls.count(2));
-            expect(db.query).toHaveBeenCalledWith(
-                `CREATE TABLE huts(
-                    id uuid UNIQUE PRIMARY KEY,
-                    name text NOT NULL,
-                    data json NOT NULL
-                )`
-            );
+            expect(db.query).toHaveBeenCalledWith(expectedCreateTableQuery);
         });
     });
 
