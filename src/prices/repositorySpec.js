@@ -67,7 +67,7 @@ describe("prices repository" , function() {
 
             expect(actualError).toEqual(jasmine.any(Error));
             expect(actualError.message).toEqual("failed to create 'prices' table");
-            expect(db.query.calls.allArgs(["SELECT 'public.prices'::regclass"],['CREATE TABLE prices(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)'])); // TODO does this work in refactorTests
+            expect(db.query.calls.allArgs()).toEqual([["SELECT 'public.prices'::regclass"], ['CREATE TABLE prices(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']]);
             expect(db.query.calls.count(2));
         });
 
