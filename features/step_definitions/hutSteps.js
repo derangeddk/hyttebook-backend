@@ -1,6 +1,6 @@
 const { When, Then } = require("cucumber");
 const assert = require("assert");
-const { isValidUuid } = require("../../src/util.js");
+const { isValidUuid } = require("../../src/utils/isValidUuid");
 
 When('I register a hut with the following information:', async function (dataTable) {
     let {
