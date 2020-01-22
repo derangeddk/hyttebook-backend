@@ -54,7 +54,7 @@ describe("forms repository", function() {
             });
 
             expect(actualError).toBe(null);
-            expect(db.query).toHaveBeenCalledWith(expectedFormsQuery,expectedFormsArguments(id));
+            expect(db.query).toHaveBeenCalledWith(expectedFormsQuery, expectedFormsArguments(id));
         });
 
         it("fails if postgres throws an error while inserting a new form", async function() {
@@ -66,7 +66,7 @@ describe("forms repository", function() {
             });
 
             expect(actualError).not.toBe(null); 
-            expect(db.query).toHaveBeenCalledWith(expectedFormsQuery,expectedFormsArguments(jasmine.any(String)));
+            expect(db.query).toHaveBeenCalledWith(expectedFormsQuery, expectedFormsArguments(jasmine.any(String)));
         });
     })
     
