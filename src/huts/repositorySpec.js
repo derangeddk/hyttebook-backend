@@ -45,7 +45,7 @@ describe("huts repository" , function() {
             expect(actualError).not.toBe(null);
         });
 
-        fit("explodes if the database explodes while creating the huts table, if the table does not already exist", async function() {
+        it("explodes if the database explodes while creating the huts table, if the table does not already exist", async function() {
             mockFailOnQuery(db, {
                 "SELECT 'public.huts'::regclass": { message: `relation "public.huts" does not exist` },
                 "CREATE TABLE huts": new Error("failed while trying to create 'huts' table")
