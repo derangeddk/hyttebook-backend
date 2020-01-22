@@ -1,5 +1,6 @@
 const { When, Then } = require("cucumber");
 const assert = require("assert");
+const { isValidUuid } = require("../../src/utils/isValidUuid");
 
 When('I register a hut with the following information:', async function (dataTable) {
     let {
@@ -9,26 +10,42 @@ When('I register a hut with the following information:', async function (dataTab
         city,
         zipCode,
         email,
-        phone
+        phone,
+        dayPrices
     } = dataTable.hashes()[0];
 
-    let hutResponse = await this.client.post("/huts", { hutName, street, streetNumber, city, zipCode, email, phone });
+    let [ monday, tuesday, wednesday, thursday, friday, saturday, sunday ] = dayPrices.split(',').map(p => parseInt(p.trim()));
+    let priceObject = { monday, tuesday, wednesday, thursday, friday, saturday, sunday };
+
+    let hutResponse = await this.client.post("/huts", { hutName, street, streetNumber, city, zipCode, email, phone, dayPrices: priceObject });
     this.hutId = hutResponse.data;
 });
 
 Then('I should receive a response containing an id', function () {
-    this.hutId;
+    assert(this.hutId != null, "hut id is null");
+    assert(isValidUuid(this.hutId), "hut id is not a valid uuid");
 });
 
 Then('a hut should exist with the following information:', async function (dataTable) {
     let expectedHutData = dataTable.hashes()[0];
     expectedHutData.id = this.hutId;
 
-    let actualHutData = await this.client.get(`/huts/${this.hutId}`);
+    let response = await this.client.get(`/huts/${this.hutId}`);
+    let actualHutData = {};
+    Object.keys(expectedHutData).forEach(key => actualHutData[key] = response.data[key]);
 
-    assert.deepStrictEqual(actualHutData.data, expectedHutData);
+    assert.deepStrictEqual(actualHutData, expectedHutData);
 });
 
+Then('the hut "xyz hut" has the following default prices:', async function (dataTable) {
+    let expectedPriceData = dataTable.hashes()[0];
+
+    let response = await this.client.get(`/huts/${this.hutId}`);
+    let actualPriceData = response.data.dayPrices;
+
+    assert(actualPriceData != null, "price data is null");
+    assert.deepEqual(actualPriceData, expectedPriceData); // TODO DeepStrictEqual doesn't work, because expectedPriceData represents the numbers as strings???
+});
 
 Then('the hut should have a form', async function () {
     let actualForm = await this.client.get(`/forms/${this.hutId}`);
@@ -43,4 +60,4 @@ Then('I should be admin of a hut named {string}', async function (string) {
 
     assert.deepStrictEqual(string, huts[0].name);
     assert.deepStrictEqual(this.hutId, huts[0].hut_id);
-  });
+});
