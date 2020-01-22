@@ -1,13 +1,13 @@
 const uuid = require('uuid');
 const tableExists = require("../repositoryUtils/tableExists");
 
-module.exports = function constructor(db) {
+module.exports = function constructor(db, formsRepo) {
     return {
         initialize: async () => {
             await ensureHutsTableExists(db);
             await ensureRoleConnectionsTableExists(db);
         },
-        create: (hut, userId) => createHutWithImplicitFormAndAdmin(db, hut, userId),
+        create: (hut, userId) => createHutWithImplicitFormAndAdmin(db, formsRepo, hut, userId),
         find: (hutId) => findHut(db, hutId),
         findByUserId: (userId) => findHutsByUserId(db, userId),
     };
@@ -60,11 +60,11 @@ async function findHutsByUserId(db, userId) {
     return huts;
 }
 
-async function createHutWithImplicitFormAndAdmin(db, hut, userId) {
+async function createHutWithImplicitFormAndAdmin(db, formsRepo, hut, userId) {
     let hutId = uuid.v4();
 
     await createHut(db, hut, hutId);
-    await createImplicitForm(db, hutId);
+    await createImplicitForm(formsRepo, hutId);
     await makeCreatingUserAdministrator(db, hutId, userId);
 
     return hutId;
@@ -102,10 +102,7 @@ async function createHut(db, hut, hutId) {
     return;
 };
 
-async function createImplicitForm(db, hutId) {
-    let id = uuid.v4();
-    let now = (new Date()).toISOString();
-
+async function createImplicitForm(formsRepo, hutId) {
     let formConfigs=  {
         showOrgType: false,
         showBankDetails: false,
@@ -120,27 +117,7 @@ async function createImplicitForm(db, hutId) {
     };
 
     try {
-        await db.query(
-            `INSERT INTO forms(
-                id,
-                hutId,
-                data
-            )
-            VALUES(
-                $1::uuid,
-                $2::uuid,
-                $3::json
-            )`,
-            [
-                id,
-                hutId,
-                {
-                    createdAt: now,
-                    updatedAt: now,
-                    ...formConfigs
-                }
-            ]
-        );
+        await formsRepo.create(hutId, formConfigs)
     } catch(error) {
         throw new Error("failed to insert form", error);
     }
