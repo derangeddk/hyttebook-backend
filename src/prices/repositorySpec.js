@@ -85,7 +85,7 @@ describe("prices repository" , function() {
 
             expect(actualError).toBe(null);
             expect(db.query.calls.count(2));
-            expect(db.query).toHaveBeenCalledWith(expectedCreateTableQuery); // TODO does this work in refactorTests ???
+            expect(db.query).toHaveBeenCalledWith(expectedCreateTableQuery);
         });
     });
 
