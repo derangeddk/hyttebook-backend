@@ -13,6 +13,64 @@ module.exports = function constructor(db, formsRepo) {
     };
 };
 
+/*
+Hut {
+    id: uuid
+    data: {
+        createdAt: ISO8601string
+        updatedAt: ISO8601string
+        hutName: string
+        street: string
+        streetNumber: string
+        city: string
+        zipCode: string
+        email: string
+        phone: string
+        price: json
+    }
+}
+
+Price {
+    id:  uuid
+    data {
+        createdAt: ISO8601string
+        updatedAt: ISO8601string
+        mon: number
+        tue: number
+        wed: number
+        thu: number
+        fri: number
+        sat: number
+        sun: number
+    }
+}
+
+Role {
+    id: uuid
+    hut_id: uuid
+    role: int
+}
+
+Form {
+    id: uuid
+    hutId: uuid
+    {
+        createdAt: string,
+        updatedAt: string,
+        showOrgType: bool,
+        showBankDetails: bool,
+        showEan: bool,
+        showCleaningToggle: bool,
+        defaultCleaningInclude: bool,
+        showArrivalTime: bool,
+        showDepartureTime: bool,
+        stdArrivalTime: bool,
+        stdDepartureTime: bool,
+        stdInformation: string
+    }
+} 
+*/
+
 async function findHut(db, hutId) {
     let result;
     try {
@@ -32,11 +90,13 @@ async function findHut(db, hutId) {
         city: result.rows[0].data.city,
         zipCode: result.rows[0].data.zipCode,
         email: result.rows[0].data.email,
-        phone: result.rows[0].data.phone
+        phone: result.rows[0].data.phone,
+        dayPrices: result.rows[0].data.dayPrices
     }
 
     return hut;
 };
+
 
 async function findHutsByUserId(db, userId) {
     let queryResult;
@@ -70,6 +130,7 @@ async function createHutWithImplicitFormAndAdmin(db, formsRepo, hut, userId) {
     return hutId;
 };
 
+
 async function createHut(db, hut, hutId) {
     let now = (new Date()).toISOString();
 
@@ -96,7 +157,7 @@ async function createHut(db, hut, hutId) {
             ]
         )
     } catch(error) {
-        throw new Error("tried to insert a new hut into 'huts' tabel", error);
+        throw new Error("tried to insert a new hut into 'huts' table", error);
     }
 
     return;
