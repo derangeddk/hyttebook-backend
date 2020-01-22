@@ -27,7 +27,7 @@ describe("huts repository" , function() {
         it("creates a repository if the huts and role_connections table already exists",async function() {
             let hutsRepository = new HutsRepository(db);
             
-            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize() );
+            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize());
 
             expect(actualError).toBe(null);
             expect(hutsRepository).toEqual({
@@ -42,7 +42,7 @@ describe("huts repository" , function() {
             mockFailOnQuery(db, "SELECT 'public.huts'::regclass");
             let hutsRepository = new HutsRepository(db);
 
-            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize() );
+            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize());
 
             expect(db.query).toHaveBeenCalledWith(expectedSelectTableQuery);
             expect(actualError).not.toBe(null);
@@ -55,7 +55,7 @@ describe("huts repository" , function() {
             });
             let hutsRepository = new HutsRepository(db);
             
-            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize() );
+            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize());
 
             expect(actualError).toEqual(jasmine.any(Error));
             expect(actualError.message).toEqual("failed while trying to create 'huts' table");
@@ -69,7 +69,7 @@ describe("huts repository" , function() {
             });
             let hutsRepository = new HutsRepository(db);
 
-            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize() );
+            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize());
 
             expect(actualError).toBe(null);
             expect(db.query.calls.count(2));
