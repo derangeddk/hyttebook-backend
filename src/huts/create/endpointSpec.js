@@ -19,7 +19,7 @@ describe("'create' endpoint for huts" , function() {
         hutData = {
             hutName: "a hutname for testing puposes",
             street: "test street",
-            streetNumber: "1",
+            streetNumber: "1", 
             city: "test city",
             zipCode: "0001",
             email: "test@test.com",
@@ -119,7 +119,7 @@ describe("'create' endpoint for huts" , function() {
 
         endpoint = createEndpoint(hutsRepository);
 
-        try { 
+        try {
             await endpoint(req, res);
         } catch(error) {
             actualError = error;
