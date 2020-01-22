@@ -1,6 +1,7 @@
 const FormsRepository = require("./repository");
 const { sqlEquality } = require("../../spec/support/customEqualityTesters");
 const mockFailOnQuery = require("../../spec/support/mockFailOnQuery");
+const getErrorsFromRunningFunction = require("../../spec/support/getErrorsFromRunningFunction");
 
 describe("forms repository", function() {
     let db;
@@ -15,6 +16,7 @@ describe("forms repository", function() {
     describe("createForm function", function() {
         let hutId, formConfigs, expectedFormsArguments;
         let expectedFormsQuery;
+        
         beforeEach(function() {
             hutId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
             formConfigs = {
@@ -47,12 +49,9 @@ describe("forms repository", function() {
             let formsRepository = new FormsRepository(db);
             let id;
 
-            let actualError = null;
-            try {
+            let actualError = await getErrorsFromRunningFunction(async () => {
                 id = await formsRepository.create(hutId, formConfigs);
-            } catch(error) {
-                actualError = error; 
-            }
+            });
 
             expect(actualError).toBe(null);
             expect(db.query).toHaveBeenCalledWith(expectedFormsQuery,expectedFormsArguments(id));
@@ -62,12 +61,9 @@ describe("forms repository", function() {
             mockFailOnQuery(db, "INSERT INTO forms");
             let formsRepository = new FormsRepository(db);
 
-            let actualError = null;
-            try {
+            let actualError = await getErrorsFromRunningFunction(async () => {
                 await formsRepository.create(hutId, formConfigs);
-            } catch(error) {
-                actualError = error; 
-            }
+            });
 
             expect(actualError).not.toBe(null); 
             expect(db.query).toHaveBeenCalledWith(expectedFormsQuery,expectedFormsArguments(jasmine.any(String)));
@@ -79,13 +75,10 @@ describe("forms repository", function() {
             mockFailOnQuery(db, "SELECT * FROM forms");
             let formsRepository = new FormsRepository(db);
     
-            let actualError = null;
-            try {
+            let actualError = await getErrorsFromRunningFunction(async () => {
                 await formsRepository.find("9bdf21e7-52b8-4529-991b-5f2df9de0323");
-            } catch(error) {
-                actualError = error;
-            }
-    
+            }); 
+            
             expect(actualError).not.toBe(null);
         });
     
@@ -115,13 +108,10 @@ describe("forms repository", function() {
     
             let formsRepository = new FormsRepository(db);
             let form;
-    
-            let actualError = null;
-            try {
+            
+            let actualError = await getErrorsFromRunningFunction(async () => {
                 form = await formsRepository.find("9bdf21e7-52b8-4529-991b-5f2df9de0323");
-            } catch(error) {
-                actualError = error;
-            }
+            }); 
     
             expect(actualError).toBe(null);
             expect(form).not.toEqual(undefined);
