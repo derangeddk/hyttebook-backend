@@ -56,7 +56,7 @@ describe("huts repository" , function() {
 
             expect(actualError).toEqual(jasmine.any(Error));
             expect(actualError.message).toEqual("failed while trying to create 'huts' table");
-            expect(db.query.calls.allArgs(["SELECT 'public.huts'::regclass"],['CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']));
+            expect(db.query.calls.allArgs()).toEqual([["SELECT 'public.huts'::regclass"], ["CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, name text NOT NULL, data json NOT NULL)"]]);
             expect(db.query.calls.count(2));
         });
 
