@@ -6,7 +6,8 @@ module.exports = (hutsRepository) => async (req, res) => {
         city,
         zipCode,
         email,
-        phone
+        phone,
+        dayPrices
     } = req.body;
 
     let userId = req.auth.user_id;
@@ -22,6 +23,7 @@ module.exports = (hutsRepository) => async (req, res) => {
     validateZipCode(zipCode, requestErrors);
     validateEmail(email, requestErrors);
     validatePhone(phone, requestErrors);
+    validatePrice(dayPrices, requestErrors);
 
     if(requestErrors.errorCount) {
         res.status(400).send({requestErrors});
@@ -40,11 +42,65 @@ module.exports = (hutsRepository) => async (req, res) => {
     res.send(result);
 };
 
+function validatePrice(prices, requestErrors) {
+    if(!prices) {
+        requestErrors.dayPrices = {
+            code: "MISSING",
+            da: "Indtast venligst priser"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+    if(!hasValidPriceProp(prices["monday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["tuesday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["wednesday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["thursday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["friday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["saturday"], requestErrors)) return;
+    if(!hasValidPriceProp(prices["sunday"], requestErrors)) return;
+}
+
+function hasValidPriceProp(dayPrice, requestErrors) {
+    if(!dayPrice) {
+        requestErrors.dayPrices = {
+            code: "MISSING",
+            da: "Indtast venligst pris for " + dayPrice
+        };
+        requestErrors.errorCount++;
+        return false;
+    }
+    if(typeof dayPrice !== 'number') {
+        requestErrors.dayPrices = {
+            code: "TYPE",
+            da: "Priser skal være en tal: " + dayPrice
+        };
+        requestErrors.errorCount++;
+        return false;
+    }
+    if(dayPrice < 0) {
+        requestErrors.dayPrices = {
+            code: "NEGATIV",
+            da: "Indtast venligt en positiv pris for " + dayPrice
+        };
+        requestErrors.errorCount++;
+        return false;
+    }
+    return true;
+}
+
 function validateHutName(hutName, requestErrors) {
     if(!hutName) {
         requestErrors.hutName = {
             code: "MISSING",
             da: "Indtast venligst hyttens navn"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+    if(typeof hutName !== 'string') {
+        requestErrors.hutName = {
+            code: "TYPE",
+            da: "Hyttenavn skal være en tekst-streng"
         };
         requestErrors.errorCount++;
         return;
@@ -62,6 +118,14 @@ function validateStreet(street, requestErrors) {
         requestErrors.errorCount++;
         return;
     }
+    if(typeof street !== 'string') {
+        requestErrors.street = {
+            code: "TYPE",
+            da: "Vejnavn skal være en tekst-streng"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
 
     return street.trim();
 }
@@ -75,6 +139,15 @@ function validateStreetNumber(streetNumber, requestErrors) {
         requestErrors.errorCount++;
         return;
     }
+    if(typeof streetNumber !== 'string') {
+        requestErrors.streetNumber = {
+            code: "TYPE",
+            da: "Vej nummer skal være en tekst-streng"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+    return streetNumber.trim();
 }
 
 function validateCity(city, requestErrors) {
@@ -82,6 +155,14 @@ function validateCity(city, requestErrors) {
         requestErrors.city = {
             code: "MISSING",
             da: "Indtast venligst bynavn"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+    if(typeof city !== 'string') {
+        requestErrors.city = {
+            code: "TYPE",
+            da: "Bynavn skal være en tekst-streng"
         };
         requestErrors.errorCount++;
         return;
@@ -95,6 +176,15 @@ function validateZipCode(zipCode, requestErrors) {
         requestErrors.zipCode = {
             code: "MISSING",
             da: "Indtast venligst postnummeret"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+
+    if(typeof zipCode !== 'string') {
+        requestErrors.zipCode = {
+            code: "TYPE",
+            da: "Postnummer skal være en tekst-streng"
         };
         requestErrors.errorCount++;
         return;
@@ -124,6 +214,15 @@ function validateEmail(email, requestErrors) {
         return;
     }
 
+    if(typeof email !== 'string') {
+        requestErrors.email = {
+            code: "TYPE",
+            da: "Email skal være en tekst-streng"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+
     email = email.trim();
 
     if(!email.match(/^.+@.+$/)) {
@@ -143,6 +242,14 @@ function validatePhone(phone, requestErrors) {
         requestErrors.phone = {
             code: "MISSING",
             da: "Indtast venligst telefonnummer"
+        };
+        requestErrors.errorCount++;
+        return;
+    }
+    if(typeof phone !== 'string') {
+        requestErrors.phone = {
+            code: "TYPE",
+            da: "Telefonnummer skal være en tekst-streng"
         };
         requestErrors.errorCount++;
         return;

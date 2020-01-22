@@ -17,18 +17,21 @@ describe("huts repository" , function() {
     });
 
     describe("constructor function", function() {
+        let expectedSelectTableQuery, expectedCreateTableQuery;
 
         beforeEach(function() {
             db.query.and.callFake(async (query) => {
                 if(query == "SELECT 'public.huts'::regclass") return;
                 if(query == "SELECT 'public.role_connections'::regclass") return;
             })
+            expectedSelectTableQuery = "SELECT 'public.huts'::regclass";
+            expectedCreateTableQuery = "CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, name text NOT NULL, data json NOT NULL)";
         });
 
         it("creates a repository if the huts and role_connections table already exists",async function() {
             let hutsRepository = new HutsRepository(db, formsRepo);
             
-            let actualError = await getErrorsFromRunningFunction(hutsRepository.initialize);
+            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize());
 
             expect(actualError).toBe(null);
             expect(hutsRepository).toEqual({
@@ -43,24 +46,24 @@ describe("huts repository" , function() {
             mockFailOnQuery(db, "SELECT 'public.huts'::regclass");
             let hutsRepository = new HutsRepository(db, formsRepo);
 
-            let actualError = await getErrorsFromRunningFunction(hutsRepository.initialize);
+            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize());
 
-            expect(db.query).toHaveBeenCalledWith("SELECT 'public.huts'::regclass");
+            expect(db.query).toHaveBeenCalledWith(expectedSelectTableQuery);
             expect(actualError).not.toBe(null);
         });
 
         it("explodes if the database explodes while creating the huts table, if the table does not already exist", async function() {
-            mockFailOnQuery(db, [
-                "SELECT 'public.huts'::regclass", 
-                "CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)"
-            ]);
-            
+            mockFailOnQuery(db, {
+                "SELECT 'public.huts'::regclass": { message: `relation "public.huts" does not exist` },
+                "CREATE TABLE huts": new Error("failed while trying to create 'huts' table")
+            });
             let hutsRepository = new HutsRepository(db, formsRepo);
             
-            let actualError = await getErrorsFromRunningFunction(hutsRepository.initialize);
+            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize());
 
             expect(actualError).toEqual(jasmine.any(Error));
-            expect(db.query.calls.allArgs(["SELECT 'public.huts'::regclass"],['CREATE TABLE huts(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']));
+            expect(actualError.message).toEqual("failed while trying to create 'huts' table");
+            expect(db.query.calls.allArgs()).toEqual([[expectedSelectTableQuery], [expectedCreateTableQuery]]);
             expect(db.query.calls.count(2));
         });
 
@@ -70,17 +73,11 @@ describe("huts repository" , function() {
             });
             let hutsRepository = new HutsRepository(db, formsRepo);
 
-            let actualError = await getErrorsFromRunningFunction(hutsRepository.initialize);
+            let actualError = await getErrorsFromRunningFunction(async () => hutsRepository.initialize());
 
             expect(actualError).toBe(null);
             expect(db.query.calls.count(2));
-            expect(db.query).toHaveBeenCalledWith( 
-                `CREATE TABLE huts(
-                    id uuid UNIQUE PRIMARY KEY,
-                    name text NOT NULL,
-                    data json NOT NULL 
-                )`
-            );
+            expect(db.query).toHaveBeenCalledWith(expectedCreateTableQuery);
         });
     });
 
@@ -139,22 +136,22 @@ describe("huts repository" , function() {
             let hutsRepository = new HutsRepository(db, formsRepo);
             let id;
 
-            let actualError = await getErrorsFromRunningFunction( async () => {
-                id = await hutsRepository.create(hutData, userId)
+            let actualError = await getErrorsFromRunningFunction(async () => {
+                id = await hutsRepository.create(hutData, userId);
             });
 
             expect(actualError).toBe(null);
-            expect(db.query).toHaveBeenCalledWith(expectedHutQuery,expectedHutArguments(id));
+            expect(db.query).toHaveBeenCalledWith(expectedHutQuery, expectedHutArguments(id));
         });
 
         it("fails if postgres throws an error while inserting a new hut", async function() {
             mockFailOnQuery(db, "INSERT INTO huts");
             let hutsRepository = new HutsRepository(db, formsRepo);
 
-            let actualError = await getErrorsFromRunningFunction( async () => await hutsRepository.create(hutData, userId));
+            let actualError = await getErrorsFromRunningFunction(async () => await hutsRepository.create(hutData, userId));
 
             expect(actualError).not.toBe(null);
-            expect(db.query).toHaveBeenCalledWith(expectedHutQuery,expectedHutArguments(jasmine.any(String)));
+            expect(db.query).toHaveBeenCalledWith(expectedHutQuery, expectedHutArguments(jasmine.any(String)));
         });
 
         it("fails if formsRepo explodes upon inserting a form after having created a hut", async function() {
@@ -168,7 +165,7 @@ describe("huts repository" , function() {
             });
 
             expect(actualError).not.toBe(null);
-            expect(db.query).toHaveBeenCalledWith(expectedHutQuery,expectedHutArguments(jasmine.any(String)));
+            expect(db.query).toHaveBeenCalledWith(expectedHutQuery, expectedHutArguments(jasmine.any(String)));
             expect(formsRepo.create).toHaveBeenCalledWith(jasmine.any(String), implicitFormConfigs);
         });
 
@@ -176,13 +173,13 @@ describe("huts repository" , function() {
             let hutsRepository = new HutsRepository(db, formsRepo);
             let hutId;
 
-            let actualError = await getErrorsFromRunningFunction( async () => {
+            let actualError = await getErrorsFromRunningFunction(async () => {
                 hutId = await hutsRepository.create(hutData, userId)
             });
 
             expect(hutId).not.toBe(undefined);
             expect(actualError).toBe(null);
-            expect(db.query).toHaveBeenCalledWith(expectedHutQuery,expectedHutArguments(hutId));
+            expect(db.query).toHaveBeenCalledWith(expectedHutQuery, expectedHutArguments(hutId));
             expect(formsRepo.create).toHaveBeenCalledWith(hutId, implicitFormConfigs);
         });
 
@@ -190,9 +187,9 @@ describe("huts repository" , function() {
             mockFailOnQuery(db, "INSERT INTO role_connections");
             let hutsRepository = new HutsRepository(db, formsRepo);
 
-            let actualError = await getErrorsFromRunningFunction( async () => await hutsRepository.create(hutData, userId));
+            let actualError = await getErrorsFromRunningFunction(async () => await hutsRepository.create(hutData, userId));
 
-            expect(db.query).toHaveBeenCalledWith(expectedRoleConnectionQuery,expectedRoleConnectionArguments(jasmine.any(String)));
+            expect(db.query).toHaveBeenCalledWith(expectedRoleConnectionQuery, expectedRoleConnectionArguments(jasmine.any(String)));
             expect(actualError).not.toBe(null);
         });
 
@@ -200,11 +197,11 @@ describe("huts repository" , function() {
             let hutsRepository = new HutsRepository(db, formsRepo);
 
             let hutId;
-            let actualError = await getErrorsFromRunningFunction( async () => {
+            let actualError = await getErrorsFromRunningFunction(async () => {
                 hutId = await hutsRepository.create(hutData, userId)
             });
 
-            expect(db.query).toHaveBeenCalledWith(expectedRoleConnectionQuery,expectedRoleConnectionArguments(hutId));
+            expect(db.query).toHaveBeenCalledWith(expectedRoleConnectionQuery, expectedRoleConnectionArguments(hutId));
             expect(hutId).toEqual(jasmine.any(String));
             expect(actualError).toBe(null);
         });
@@ -222,7 +219,7 @@ describe("huts repository" , function() {
             let hutsRepository = new HutsRepository(db, formsRepo);
             
             let hut;
-            let actualError = await getErrorsFromRunningFunction( async () => {
+            let actualError = await getErrorsFromRunningFunction(async () => {
                 hut = await hutsRepository.find(hutId)
             });
 
@@ -251,8 +248,8 @@ describe("huts repository" , function() {
                 ]
             };
 
-            let actualError = await getErrorsFromRunningFunction( async () => {
-                await hutsRepository.find(hutId)
+            let actualError = await getErrorsFromRunningFunction(async () => {
+                await hutsRepository.find(hutId);
             });
 
             expect(db.query).toHaveBeenCalledWith(`SELECT * FROM huts WHERE id = '${hutId}'`);
@@ -276,7 +273,7 @@ describe("huts repository" , function() {
             mockFailOnQuery(db, "SELECT role_connections.hut_id, huts.name FROM huts");
             let hutsRepository = new HutsRepository(db, formsRepo);
 
-            let actualError = await getErrorsFromRunningFunction( async () => await hutsRepository.findByUserId(userId));
+            let actualError = await getErrorsFromRunningFunction(async () => await hutsRepository.findByUserId(userId));
 
             expect(actualError).not.toBe(null);
             expect(db.query).toHaveBeenCalledWith(expectedQuery(userId));
@@ -291,8 +288,8 @@ describe("huts repository" , function() {
             let hutsRepository = new HutsRepository(db, formsRepo);
             let huts; 
 
-            let actualError = await getErrorsFromRunningFunction( async () => { 
-                huts = await hutsRepository.findByUserId(userId)
+            let actualError = await getErrorsFromRunningFunction(async () => { 
+                huts = await hutsRepository.findByUserId(userId);
             });
 
             expect(actualError).toBe(null);

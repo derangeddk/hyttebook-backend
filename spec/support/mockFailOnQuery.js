@@ -1,24 +1,24 @@
-module.exports = function mockFailOnQuery(db, querysToFailOn) {
-    if (!querysToFailOn) {
+module.exports = function mockFailOnQuery(db, queriesToFailOn) {
+    if (!queriesToFailOn) {
         db.query.and.callFake(async () => {
             throw new Error("postgres exploded")
         });
     }
     
-    if(typeof querysToFailOn === "string") {
-        return mockFailOnQuery(db, [ querysToFailOn ]);
+    if(typeof queriesToFailOn === "string") {
+        return mockFailOnQuery(db, [ queriesToFailOn ]);
     }
     
-    if (Array.isArray(querysToFailOn)) {
+    if (Array.isArray(queriesToFailOn)) {
         let obj = {};
-        querysToFailOn.forEach(q => obj[q] = new Error(`postgres exploded while trying to run a query starting with '${q}'.`));
+        queriesToFailOn.forEach(q => obj[q] = new Error(`postgres exploded while trying to run a query starting with '${q}'.`));
         return mockFailOnQuery(db, obj);
     }
     
     db.query.and.callFake(async (query) => {
-        Object.keys(querysToFailOn).forEach(q => { 
+        Object.keys(queriesToFailOn).forEach(q => { 
             if(query.startsWith(q)) {
-                throw querysToFailOn[q];
+                throw queriesToFailOn[q];
             }
         });
     });
