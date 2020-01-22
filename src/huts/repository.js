@@ -68,7 +68,7 @@ Form {
         stdDepartureTime: bool,
         stdInformation: string
     }
-} 
+}
 */
 
 async function findHut(db, hutId) {

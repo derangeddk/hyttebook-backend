@@ -2,7 +2,7 @@ const createEndpoint = require("./endpoint");
 const theoretically = require('jasmine-theories');
 
 describe("'create' endpoint for huts" , function() {
-    let hutPropertiesToBeTested = ["hutName","street","streetNumber","city","zipCode","email","phone", "dayPrices"]; 
+    let hutPropertiesToBeTested = ["hutName","street","streetNumber","city","zipCode","email","phone", "dayPrices"];
     let user_id;
     let hutId;
     let hutData;
