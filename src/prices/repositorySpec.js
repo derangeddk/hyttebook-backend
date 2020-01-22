@@ -14,10 +14,14 @@ describe("prices repository" , function() {
     });
 
     describe("constructor function", function() {
+        let expectedSelectTableQuery, expectedCreateTableQuery;
+
         beforeEach(function() {
             db.query.and.callFake(async (query) => {
                 if(query == "SELECT 'public.prices'::regclass") return;
             });
+            expectedSelectTableQuery = "SELECT 'public.prices'::regclass";
+            expectedCreateTableQuery = 'CREATE TABLE prices(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)';
         })
 
         it("creates a repository if the prices table already exists",async function() {
@@ -39,7 +43,7 @@ describe("prices repository" , function() {
 
             let actualError = await getErrorsFromRunningFunction(async () => { await pricesRepository.initialize(); });
 
-            expect(db.query).toHaveBeenCalledWith("SELECT 'public.prices'::regclass");
+            expect(db.query).toHaveBeenCalledWith(expectedSelectTableQuery);
             expect(actualError).not.toBe(null);
         });
 
@@ -67,7 +71,7 @@ describe("prices repository" , function() {
 
             expect(actualError).toEqual(jasmine.any(Error));
             expect(actualError.message).toEqual("failed to create 'prices' table");
-            expect(db.query.calls.allArgs()).toEqual([["SELECT 'public.prices'::regclass"], ['CREATE TABLE prices(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)']]);
+            expect(db.query.calls.allArgs()).toEqual([[expectedSelectTableQuery], [expectedCreateTableQuery]]);
             expect(db.query.calls.count(2));
         });
 
@@ -81,9 +85,7 @@ describe("prices repository" , function() {
 
             expect(actualError).toBe(null);
             expect(db.query.calls.count(2));
-            expect(db.query).toHaveBeenCalledWith(
-                `CREATE TABLE prices(id uuid UNIQUE PRIMARY KEY, data json NOT NULL)` // TODO does this work in refactorTests ???
-            );
+            expect(db.query).toHaveBeenCalledWith(expectedCreateTableQuery); // TODO does this work in refactorTests ???
         });
     });
 
@@ -140,7 +142,7 @@ describe("prices repository" , function() {
     });
 
     describe("findHutDayPrices function", function() {
-        let priceId, priceResponse;
+        let priceId, priceResponse, expectedSelectQuery;
 
         beforeEach(function() {
             priceId = "9bdf21e7-52b8-4529-991b-5f2df9de0323";
@@ -160,6 +162,7 @@ describe("prices repository" , function() {
                     }
                 ]
             };
+            expectedSelectQuery = (id) => `SELECT * FROM prices WHERE id = '${priceId}'`;
         });
 
         it("fails if postgres throws an error while looking for the price data", async function() {
@@ -171,7 +174,7 @@ describe("prices repository" , function() {
                 priceData = await pricesRepository.find(priceId); 
             });
 
-            expect(db.query).toHaveBeenCalledWith(`SELECT * FROM prices WHERE id = '${priceId}'`);
+            expect(db.query).toHaveBeenCalledWith(expectedSelectQuery(priceId));
             expect(actualError).not.toBe(null);
             expect(priceData).toEqual(undefined);
         });
@@ -185,7 +188,7 @@ describe("prices repository" , function() {
                 foundPrice = await pricesRepository.find(priceId);
             });
 
-            expect(db.query).toHaveBeenCalledWith(`SELECT * FROM prices WHERE id = '${priceId}'`);
+            expect(db.query).toHaveBeenCalledWith(expectedSelectQuery(priceId));
             expect(foundPrice).not.toBe(null);
             expect(actualError).toEqual(null);
         });
