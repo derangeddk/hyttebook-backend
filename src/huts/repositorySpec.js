@@ -144,11 +144,11 @@ describe("huts repository" , function() {
             let id;
 
             let actualError = await getErrorsFromRunningFunction(async () => {
-                id = await hutsRepository.create(hutData, userId)
+                id = await hutsRepository.create(hutData, userId);
             });
 
             expect(actualError).toBe(null);
-            expect(db.query).toHaveBeenCalledWith(expectedHutQuery,expectedHutArguments(id));
+            expect(db.query).toHaveBeenCalledWith(expectedHutQuery, expectedHutArguments(id));
         });
 
         it("fails if postgres throws an error while inserting a new hut", async function() {
@@ -158,7 +158,7 @@ describe("huts repository" , function() {
             let actualError = await getErrorsFromRunningFunction(async () => await hutsRepository.create(hutData, userId));
 
             expect(actualError).not.toBe(null);
-            expect(db.query).toHaveBeenCalledWith(expectedHutQuery,expectedHutArguments(jasmine.any(String)));
+            expect(db.query).toHaveBeenCalledWith(expectedHutQuery, expectedHutArguments(jasmine.any(String)));
         });
 
         it("fails if postgress explodes upon inserting a form after having created a hut", async function() {
@@ -168,7 +168,7 @@ describe("huts repository" , function() {
             let actualError = await getErrorsFromRunningFunction(async () => await hutsRepository.create(hutData, userId));
 
             expect(actualError).not.toBe(null);
-            expect(db.query).toHaveBeenCalledWith(expectedHutQuery,expectedHutArguments(jasmine.any(String)));
+            expect(db.query).toHaveBeenCalledWith(expectedHutQuery, expectedHutArguments(jasmine.any(String)));
             expect(db.query).toHaveBeenCalledWith(expectedFormsQuery, expectedFormsArguments(jasmine.any(String)));
         });
 
@@ -182,7 +182,7 @@ describe("huts repository" , function() {
 
             expect(hutId).not.toBe(undefined);
             expect(actualError).toBe(null);
-            expect(db.query).toHaveBeenCalledWith(expectedHutQuery,expectedHutArguments(hutId));
+            expect(db.query).toHaveBeenCalledWith(expectedHutQuery, expectedHutArguments(hutId));
             expect(db.query).toHaveBeenCalledWith(expectedFormsQuery, expectedFormsArguments(jasmine.any(String)));
         });
 
@@ -192,7 +192,7 @@ describe("huts repository" , function() {
 
             let actualError = await getErrorsFromRunningFunction(async () => await hutsRepository.create(hutData, userId));
 
-            expect(db.query).toHaveBeenCalledWith(expectedRoleConnectionQuery,expectedRoleConnectionArguments(jasmine.any(String)));
+            expect(db.query).toHaveBeenCalledWith(expectedRoleConnectionQuery, expectedRoleConnectionArguments(jasmine.any(String)));
             expect(actualError).not.toBe(null);
         });
 
@@ -204,7 +204,7 @@ describe("huts repository" , function() {
                 hutId = await hutsRepository.create(hutData, userId)
             });
 
-            expect(db.query).toHaveBeenCalledWith(expectedRoleConnectionQuery,expectedRoleConnectionArguments(hutId));
+            expect(db.query).toHaveBeenCalledWith(expectedRoleConnectionQuery, expectedRoleConnectionArguments(hutId));
             expect(hutId).toEqual(jasmine.any(String));
             expect(actualError).toBe(null);
         });
@@ -252,7 +252,7 @@ describe("huts repository" , function() {
             };
 
             let actualError = await getErrorsFromRunningFunction(async () => {
-                await hutsRepository.find(hutId)
+                await hutsRepository.find(hutId);
             });
 
             expect(db.query).toHaveBeenCalledWith(`SELECT * FROM huts WHERE id = '${hutId}'`);
@@ -292,7 +292,7 @@ describe("huts repository" , function() {
             let huts; 
 
             let actualError = await getErrorsFromRunningFunction(async () => { 
-                huts = await hutsRepository.findByUserId(userId)
+                huts = await hutsRepository.findByUserId(userId);
             });
 
             expect(actualError).toBe(null);
@@ -309,5 +309,5 @@ describe("huts repository" , function() {
             actualError = error;
         }
         return actualError;
-    }
+    };
 });
