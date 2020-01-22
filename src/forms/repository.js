@@ -1,3 +1,4 @@
+const uuid = require('uuid');
 const ensureFormsTableExists = require("../../src/forms/ensureFormsTableExists");
 
 module.exports = function constructor(db) {
@@ -5,7 +6,41 @@ module.exports = function constructor(db) {
         initialize: async () => await ensureFormsTableExists(db),
         find: (hutId) => findForm(db, hutId),
         update: (hutId, formConfigs) => updateForm(db, hutId, formConfigs),
+        create: (hutId, formConfigs) => createForm(db, hutId, formConfigs)
     };
+};
+
+async function createForm(db, hutId, formConfigs) {
+    let id = uuid.v4();
+    let now = (new Date()).toISOString();
+
+    try {
+        await db.query(
+            `INSERT INTO forms(
+                id,
+                hutId,
+                data
+            )
+            VALUES(
+                $1::uuid,
+                $2::uuid,
+                $3::json
+            )`,
+            [
+                id,
+                hutId,
+                {
+                    createdAt: now,
+                    updatedAt: now,
+                    ...formConfigs
+                }
+            ]
+        );
+    } catch(error) {
+        throw new Error("failed to insert form", error);
+    }
+
+    return id;
 };
 
 async function updateForm(db, hutId, formConfigs) {

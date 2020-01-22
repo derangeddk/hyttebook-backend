@@ -46,7 +46,7 @@ module.exports = (config) => {
     const db = new Pool(config.postgres);
     let usersRepository = new UsersRepository(db);
     let formsRepository = new FormsRepository(db);
-    let hutsRepository = new HutsRepository(db);
+    let hutsRepository = new HutsRepository(db, formsRepository);
 
     app.post("/login", loginEndpoint(usersRepository));
     app.use("/users", usersApp(usersRepository));
