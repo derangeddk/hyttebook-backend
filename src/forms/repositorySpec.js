@@ -2,7 +2,7 @@ const FormsRepository = require("./repository");
 const { sqlEquality } = require("../../spec/support/customEqualityTesters");
 const mockFailOnQuery = require("../../spec/support/mockFailOnQuery");
 
-fdescribe("forms repository", function() {
+describe("forms repository", function() {
     let db;
         
     beforeEach(function() {
